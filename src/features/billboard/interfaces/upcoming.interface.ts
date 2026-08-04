@@ -9,7 +9,3 @@ export interface UpcomingMovie {
     estimatedCityRelease?: string;
     isNotified?: boolean;
 }
-
-export interface UpcomingResponse{
-    data: UpcomingMovie[];
-}
