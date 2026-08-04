@@ -1,0 +1,2 @@
+# aqui van funciones que se usan en varias partes de la aplicacion
+## La carpeta utils (utilidades) contiene funciones genéricas, puras y reutilizables que realizan tareas técnicas u operaciones comunes
