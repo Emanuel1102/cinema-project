@@ -1,9 +1,10 @@
 import { createBrowserRouter } from "react-router";
+import { Formulario } from "./features/billboard/pages";
 
 export const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello World</div>,
+    element: <Formulario />,
   },
   {
     path: "/auth",
