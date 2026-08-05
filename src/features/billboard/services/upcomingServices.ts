@@ -3,7 +3,7 @@ import type { UpcomingMovie } from "../interfaces/upcoming.interface";
 //Remplazar por cliente HTTP centralizado (Axios/Fetch) opcional
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
-export const getUpcomingMovie = async (): Promise<UpcomingMovie[]> =>{
+export const getUpcomingMovies = async (): Promise<UpcomingMovie[]> =>{
     const response = await fetch (`${BASE_URL}/movies/upcoming`);
     if(!response.ok) throw new Error('Error al obtener los proximos estrenos');
     return response.json();
