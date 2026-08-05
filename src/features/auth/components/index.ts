@@ -1,0 +1,6 @@
+export { RegisterForm } from './RegisterForm'
+export { ProgressIndicator } from './ProgressIndicator'
+export { PasswordStrengthMeter } from './PasswordStrengthMeter'
+export { CaptchaStub } from './CaptchaStub'
+export { Confirmation } from './Confirmation'
+export { ActivationPage } from './ActivationPage'
