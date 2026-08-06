@@ -9,5 +9,19 @@ export const appRouter = createBrowserRouter([
   {
     path: "/auth",
     element: 'Renderizar aqui tus rutas de auth'
+  },
+  {
+    path: "/movies",
+    element: <HomeMovies/>,
+    children: [
+      {
+        path: 'movies-in-billboard',
+        element: <MoviesOnBillboard/>,
+      },
+      {
+        path:'upcomming-movies',
+        element: 'proximas a estrenar'
+      }
+    ]
   }
 ]);
