@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router"; //  Importar hook de navegación
 
+// ... (Tus constantes DEPARTAMENTS_BY_COUNTRY y CITY_BY_DEPARTAMENTS se mantienen igual) ...
 const DEPARTAMENTS_BY_COUNTRY: Record<string, string[]> = {
   colombia: ["choco", "atlantico", "cordoba"],
   peru: ["cusco", "lima", "ucayali"],
@@ -15,6 +17,7 @@ const CITY_BY_DEPARTAMENTS: Record<string, string[]> = {
 };
 
 export function LocationForm() {
+  const navigate = useNavigate(); //  Inicializar navigate
   const [country, setCountry] = useState("colombia");
   const [departament, setDepartament] = useState("");
   const [city, setCity] = useState("");
@@ -37,13 +40,28 @@ export function LocationForm() {
     setCity(event.target.value);
   }
 
+  // Función para manejar el click y navegar
+  function handleVerCartelera() {
+    if (!city) return;
+
+    // Navega a '/movies' pasando los datos en el estado
+    navigate("/movies", { 
+      state: { 
+        country, 
+        departament, 
+        city 
+      } 
+    });
+  }
+
   const selectClass =
     "w-full bg-white border border-[#A476FF]/50 rounded-md px-3 py-2.5 text-sm text-[#0B1326] focus:outline-none focus:border-[#732EE4] focus:ring-2 focus:ring-[#732EE4]/30 disabled:opacity-40 disabled:cursor-not-allowed";
 
   return (
     <div className="fixed inset-0 bg-[#0B1326]/90 backdrop-blur-sm flex items-center justify-center p-6">
       <div className="w-full max-w-sm bg-[#F4EEFF] border border-[#D2BBFF] rounded-xl overflow-hidden shadow-2xl">
-
+        
+        {/* ... (Todo el JSX del header y los selects se mantiene IGUAL) ... */}
         <div className="h-32 bg-[#732EE4] relative">
           <div className="absolute top-4 left-4 w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-md">
             📍
@@ -88,7 +106,7 @@ export function LocationForm() {
               <option value="">Seleccionar...</option>
               {currentDepartaments.map((depart) => (
                 <option key={depart} value={depart}>
-                  {depart}
+                  {depart.charAt(0).toUpperCase() + depart.slice(1)}
                 </option>
               ))}
             </select>
@@ -109,13 +127,15 @@ export function LocationForm() {
               <option value="">Seleccionar...</option>
               {currentCities.map((cityName) => (
                 <option key={cityName} value={cityName}>
-                  {cityName}
+                  {cityName.charAt(0).toUpperCase() + cityName.slice(1)}
                 </option>
               ))}
             </select>
           </div>
 
+          {/* 4. Agregar el onClick al botón */}
           <button
+            onClick={handleVerCartelera} 
             disabled={!city}
             className="w-full text-sm font-semibold tracking-wide py-3 rounded-md transition
               bg-[#732EE4] hover:bg-[#8D4FFF] text-white
@@ -127,4 +147,4 @@ export function LocationForm() {
       </div>
     </div>
   );
-}
+}   
