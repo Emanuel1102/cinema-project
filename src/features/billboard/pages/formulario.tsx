@@ -1,5 +1,5 @@
-import { LocationModal } from "../components";
+import { LocationForm } from "../components";
 
 export function Formulario() {
-  return <LocationModal />;
+  return <LocationForm />;
 }

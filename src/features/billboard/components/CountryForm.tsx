@@ -14,7 +14,7 @@ const CITY_BY_DEPARTAMENTS: Record<string, string[]> = {
   ucayali: ["pucallpa", "atalaya", "purus"],
 };
 
-export function LocationModal() {
+export function LocationForm() {
   const [country, setCountry] = useState("colombia");
   const [departament, setDepartament] = useState("");
   const [city, setCity] = useState("");
