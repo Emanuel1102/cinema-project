@@ -1,10 +1,12 @@
-import { createBrowserRouter } from "react-router";
 import { Formulario } from "./features/billboard/pages";
+import { createBrowserRouter } from "react-router";
+import { HomeMovies } from "./features/billboard/layouts/HomeMovies";
+import { MoviesOnBillboard } from "./features/billboard/layouts/MoviesOnBillboard";
 
 export const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Formulario />,
+    element: <Formulario/>,
   },
   {
     path: "/auth",
