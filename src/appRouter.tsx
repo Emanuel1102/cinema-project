@@ -1,3 +1,4 @@
+import { Formulario } from "./features/billboard/pages";
 import { createBrowserRouter } from "react-router";
 import { HomeMovies } from "./features/billboard/layouts/HomeMovies";
 import { MoviesOnBillboard } from "./features/billboard/layouts/MoviesOnBillboard";
@@ -5,7 +6,7 @@ import { MoviesOnBillboard } from "./features/billboard/layouts/MoviesOnBillboar
 export const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <div>Hello World</div>,
+    element: <Formulario/>,
   },
   {
     path: "/auth",
