@@ -10,10 +10,6 @@ export const appRouter = createBrowserRouter([
     element: <Formulario/>,
   },
   {
-    path: "upcoming",
-    element:<UpcomingPage/>,
-  },
-  {
     path: "/auth",
     element: 'Renderizar aqui tus rutas de auth'
   },
@@ -22,12 +18,12 @@ export const appRouter = createBrowserRouter([
     element: <HomeMovies/>,
     children: [
       {
-        path: 'movies-in-billboard',
+        index: true,
         element: <MoviesOnBillboard/>,
       },
       {
-        path:'upcomming-movies',
-        element: 'proximas a estrenar'
+        path:'upcomming',
+        element: <UpcomingPage/>
       }
     ]
   }

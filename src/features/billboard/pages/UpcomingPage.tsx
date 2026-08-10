@@ -44,29 +44,6 @@ export const UpcomingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0b0f19] text-slate-100 p-6 md:p-12 font-sans">
       <div className="max-w-5xl mx-auto space-y-8">
-        
-        {/* Botón de regreso al Home */}
-        <div>
-          <a
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors duration-200"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Volver al inicio
-          </a>
-        </div>
 
         {/* Cabecera con título y filtro */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

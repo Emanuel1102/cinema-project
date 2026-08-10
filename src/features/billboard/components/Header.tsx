@@ -16,10 +16,10 @@ export const Header = () => {
             <span className="text-gray-900 hidden sm:block">MULTICINE</span>
         </div>
         <nav className="flex items-center gap-1 text-sm font-medium">
-            <Link to="movies-in-billboard" className="px-3 py-1.5 rounded-lg transition-colors text-red-600 bg-red-50 cursor-pointer">
+            <Link to="/movies" className="px-3 py-1.5 rounded-lg transition-colors text-red-600 bg-red-50 cursor-pointer">
                 Cartelera
             </Link>
-            <Link to="upcomming-movies" className="px-3 py-1.5 rounded-lg transition-colors text-gray-600 hover:text-gray-900 hover:bg-gray-50 cursor-pointer">
+            <Link to="upcomming" className="px-3 py-1.5 rounded-lg transition-colors text-gray-600 hover:text-gray-900 hover:bg-gray-50 cursor-pointer">
                 Próximamente
             </Link>
         </nav>
