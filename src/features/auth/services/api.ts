@@ -1,4 +1,4 @@
-import type { RegisterPayload, RegisterResponse, VerifyEmailResponse } from '../interfaces'
+import type { LoginPayload, LoginResponse, RegisterPayload, RegisterResponse, VerifyEmailResponse } from '../interfaces'
 
 // Base URL for the backend API. Configure `VITE_API_BASE` in your env when needed.
 const API_BASE = import.meta.env.VITE_API_BASE || ''
@@ -18,6 +18,16 @@ async function handleJsonResponse(res: Response) {
 /** POST /auth/register - send register payload */
 export async function register(payload: RegisterPayload): Promise<RegisterResponse> {
   const res = await fetch(`${API_BASE}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  return handleJsonResponse(res)
+}
+
+/** POST /auth/login - authenticate user credentials */
+export async function login(payload: LoginPayload): Promise<LoginResponse> {
+  const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

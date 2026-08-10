@@ -1,5 +1,5 @@
 import React from 'react'
-import { verifyEmail, createMembership } from '../services/api'
+import { verifyEmail, createMembership } from '../../services/api'
 
 // ActivationPage reads the `token` query parameter from the URL
 // and calls the verify-email endpoint. Uses `window.location` to avoid

@@ -1,4 +1,6 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router"
+import { RegisterPage } from "./features/auth/pages/register/RegisterPage"
+import { LoginPage } from "./features/auth/pages/login/LoginPage"
 
 export const appRouter = createBrowserRouter([
   {
@@ -6,7 +8,11 @@ export const appRouter = createBrowserRouter([
     element: <div>Hello World</div>,
   },
   {
-    path: "/auth",
-    element: 'Renderizar aqui tus rutas de auth'
-  }
-]);
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />,
+  },
+])

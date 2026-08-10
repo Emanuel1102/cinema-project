@@ -52,6 +52,19 @@ export interface RegisterPayload {
   captchaToken?: string
 }
 
+/** Payload sent to POST /auth/login */
+export interface LoginPayload {
+  email: string
+  password: string
+}
+
+/** Login response from backend */
+export interface LoginResponse {
+  ok: boolean
+  message?: string
+  errors?: ApiError[]
+}
+
 /** API error object returned by backend (field optional) */
 export interface ApiError {
   field?: string
