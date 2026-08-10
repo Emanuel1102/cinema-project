@@ -1,8 +1,8 @@
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, Ticket } from "lucide-react";
 import { toast } from "sonner";
-import { cities, dateKey, formatCOP, next7Days } from "@/lib/data";
+import { cities, dateKey, formatCOP, next7Days, type City } from "@/lib/data";
 import {
   fetchFunctions,
   fetchMovie,
@@ -12,17 +12,17 @@ import {
   type Screening,
 } from "@/lib/movies-api";
 import { useAuth, useLocation } from "@/lib/store";
-import { MovieHero } from "@/components/movie/MovieHero";
-import { TrailerModal } from "@/components/movie/TrailerModal";
-import { MovieInfo } from "@/components/movie/MovieInfo";
-import { CastList } from "@/components/movie/CastList";
-import { ShowtimeFilters } from "@/components/movie/ShowtimeFilters";
-import { ShowtimeList } from "@/components/movie/ShowtimeList";
-import { Recommendations } from "@/components/movie/Recommendations";
+import { MovieHero } from "@/features/billboard/components/MovieItems/MovieHero";
+import { TrailerModal } from "@/features/billboard/components/MovieItems/TrailerModal";
+import { MovieInfo } from "@/features/billboard/components/MovieItems/MovieInfo";
+import { CastList } from "@/features/billboard/components/MovieItems/CastList";
+import { ShowtimeFilters } from "@/features/billboard/components/MovieItems/ShowtimeFilters";
+import { ShowtimeList } from "@/features/billboard/components/MovieItems/ShowtimeList";
+import { Recommendations } from "@/features/billboard/components/MovieItems/Recommendations";
 
 export default function MovieDetails() {
   // Obtenemos el movieId de los parámetros de la URL sin requerir la definición estricta de la ruta
-  const { movieId } = useParams({ strict: false }) as { movieId: string };
+  const { movieId } = useParams() as { movieId: string };
   const navigate = useNavigate();
   const { user } = useAuth();
   const { location } = useLocation();
@@ -74,6 +74,7 @@ export default function MovieDetails() {
   }, [movieId]);
 
   // Cargar funciones de la película
+  console.log("Movie ID:", movieId, "City ID:", cityId); // Debugging line
   useEffect(() => {
     if (!movieId) return;
     setIsFunctionsLoading(true);
@@ -127,19 +128,10 @@ export default function MovieDetails() {
     savePendingScreening(selected);
     if (!user) {
       toast.error("Inicia sesión para comprar tus entradas");
-      navigate({ to: "/login" });
+      navigate("/login");
       return;
     }
-    navigate({
-      to: "/asientos/$movieId",
-      params: { movieId },
-      search: {
-        date: selected.date,
-        time: selected.time,
-        format: selected.format,
-        complex: selected.complex,
-      },
-    });
+  navigate(`/asientos/${movieId}?date=${selected.date}&time=${selected.time}&format=${selected.format}&complex=${encodeURIComponent(selected.complex)}`);
   }
 
   if (isMovieLoading) {
