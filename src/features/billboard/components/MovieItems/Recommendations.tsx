@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router";
 import { Star } from "lucide-react";
 import type { Movie } from "@/lib/data";
 
@@ -17,8 +17,7 @@ export function Recommendations({ movies, loading }: { movies: Movie[]; loading:
           {movies.map((m) => (
             <Link
               key={m.id}
-              to="/pelicula/$movieId"
-              params={{ movieId: m.id }}
+              to={`/pelicula/${m.id}`}
               className="group rounded-xl p-2 transition hover:bg-secondary"
             >
               <img

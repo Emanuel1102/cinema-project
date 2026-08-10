@@ -1,6 +1,6 @@
 import { Play, Star, Clock } from "lucide-react";
 import type { Movie } from "@/lib/data";
-import bannerImg from "@/assets/banner.jpg";
+import bannerImg from "@/assets/hero.png";
 
 export function MovieHero({ movie, onTrailer }: { movie: Movie; onTrailer: () => void }) {
   return (
