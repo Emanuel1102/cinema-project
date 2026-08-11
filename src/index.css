@@ -1,1 +1,26 @@
 @import "tailwindcss";
+@layer utilities {
+  /* Efecto Glassmorphism (Cristal ahumado) */
+  .bg-glass {
+    background: rgba(24, 34, 56, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Borde con brillo neón azul/morado */
+  .border-glow-purple {
+    border: 1px solid rgba(124, 58, 237, 0.35);
+    box-shadow: 0 0 15px -3px rgba(124, 58, 237, 0.25);
+  }
+
+  /* Borde con brillo neón azul cian */
+  .border-glow-blue {
+    border: 1px solid rgba(129, 140, 248, 0.25);
+    box-shadow: 0 0 12px -2px rgba(129, 140, 248, 0.15);
+  }
+
+  /* Brillo en botones rosas */
+  .glow-pink-btn {
+    box-shadow: 0 0 20px 0px rgba(219, 39, 119, 0.45);
+  }
+}
