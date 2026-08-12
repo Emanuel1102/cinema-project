@@ -1,5 +1,6 @@
 import React from 'react'
 import { RegisterForm } from '../../components'
+import { Link } from 'react-router'
 
 export const RegisterPage: React.FC = () => {
   return (
@@ -11,6 +12,15 @@ export const RegisterPage: React.FC = () => {
             <p className="mt-3 text-base text-slate-300">
               Regístrate para reservar y comprar entradas en Riwi Films con una experiencia rápida y segura.
             </p>
+            <div className="mt-4">
+              <Link
+                to="/login"
+                className="text-sm font-medium text-[#7C3AED] hover:underline"
+                aria-label="Volver al login"
+              >
+                ¿Ya tienes cuenta? Volver al login
+              </Link>
+            </div>
           </div>
         </div>
 

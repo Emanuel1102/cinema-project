@@ -20,6 +20,7 @@ export async function register(payload: RegisterPayload): Promise<RegisterRespon
   const res = await fetch(`${API_BASE}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify(payload),
   })
   return handleJsonResponse(res)
@@ -30,6 +31,7 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify(payload),
   })
   return handleJsonResponse(res)
@@ -40,6 +42,7 @@ export async function verifyEmail(token: string): Promise<VerifyEmailResponse> {
   const res = await fetch(`${API_BASE}/auth/verify-email`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ token }),
   })
   return handleJsonResponse(res)
@@ -50,6 +53,7 @@ export async function createMembership(userId: string): Promise<{ ok: boolean; m
   const res = await fetch(`${API_BASE}/membership/create`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ userId }),
   })
   return handleJsonResponse(res)

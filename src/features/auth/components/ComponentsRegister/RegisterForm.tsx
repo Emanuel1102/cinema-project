@@ -198,7 +198,8 @@ export const RegisterForm: React.FC = () => {
                 value={personal.documentType}
                 onChange={(e) => setPersonal({ ...personal, documentType: e.target.value })}
               >
-                <option>ID</option>
+                <option>C.C. (Cedula de Ciudadania)</option>
+                 <option>T.I. (Tarjeta de Identidad)</option>
                 <option>Passport</option>
               </select>
             </label>

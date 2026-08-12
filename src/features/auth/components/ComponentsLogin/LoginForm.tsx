@@ -1,6 +1,7 @@
 import React from 'react'
 import type { LoginPayload } from '../../interfaces'
 import { login } from '../../services/api'
+import { Link } from 'react-router'
 
 const initialState: LoginPayload = { email: '', password: '' }
 
@@ -101,9 +102,9 @@ export const LoginForm: React.FC = () => {
         </button>
 
         <div className="flex flex-col gap-2 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-          <a href="/register" className="text-[#818CF8] hover:text-[#a5b4fc]">
+          <Link to="/register" className="text-[#818CF8] hover:text-[#a5b4fc]">
             Crear cuenta
-          </a>
+          </Link>
           <a href="#" className="text-[#818CF8] hover:text-[#a5b4fc]">
             ¿Olvidaste tu contraseña?
           </a>
