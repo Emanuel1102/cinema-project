@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router";
-import { LoginPage } from "./features/auth/pages/login/LoginPage";
-import { ProfilePage } from "./features/auth/pages/ProfilePage";
-import { RegisterPage } from "./features/auth/pages/register/RegisterPage";
+import { LoginPage } from "./features/auth/views/LoginView";
+import { ProfilePage } from "./features/auth/views/ProfileView";
+import { RegisterPage } from "./features/auth/views/RegisterView";
 import { HomeMovies } from "./features/billboard/layouts/HomeMovies";
-import { MoviesOnBillboard } from "./features/billboard/layouts/MoviesOnBillboard";
-import MovieDetails from "./features/billboard/pages/MovieDetails";
-import { Formulario } from "./features/billboard/pages";
-import { UpcomingPage } from "./features/billboard/pages/UpcomingPage";
+import { MoviesOnBillboard } from "./features/billboard/views/MoviesOnBillboardView";
+import MovieDetails from "./features/billboard/views/MovieDetailsView";
+import { Formulario } from "./features/billboard/views/LocationView";
+import { UpcomingPage } from "./features/billboard/views/UpcomingView";
 
 export const appRouter = createBrowserRouter([
   { path: "/", element: <Formulario /> },

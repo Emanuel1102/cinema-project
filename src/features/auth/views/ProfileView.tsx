@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { UserProfile, MembershipLevel } from '../interfaces/user.interface';
 import { getUserProfile, updateUserProfile, RANK_CONFIG } from '../services/profileService';
+import { BackToHomeButton } from '@/shared/components';
 
 // Definición de beneficios por nivel
 interface Benefit {
@@ -113,7 +114,10 @@ export const ProfilePage: React.FC = () => {
       {/* NAVBAR SUPERIOR RESPONSIVA */}
       <nav className="sticky top-0 z-50 bg-[#0B0F19]/80 backdrop-blur-md border-b border-white/10 px-4 md:px-8 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <span className="text-xl font-extrabold tracking-wider text-purple-400">CINEPLEX</span>
+          <div className="flex items-center gap-4">
+            <span className="text-xl font-extrabold tracking-wider text-purple-400">CINEPLEX</span>
+            <BackToHomeButton />
+          </div>
           
           <div className="hidden md:flex gap-8 text-sm font-medium text-slate-300">
             <a href="#" className="hover:text-white transition">Home</a>

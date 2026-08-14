@@ -19,6 +19,7 @@ import { CastList } from "@/features/billboard/components/MovieItems/CastList";
 import { ShowtimeFilters } from "@/features/billboard/components/MovieItems/ShowtimeFilters";
 import { ShowtimeList } from "@/features/billboard/components/MovieItems/ShowtimeList";
 import { Recommendations } from "@/features/billboard/components/MovieItems/Recommendations";
+import { BackToHomeButton } from "@/shared/components";
 
 export default function MovieDetails() {
   // Obtenemos el movieId de los parámetros de la URL sin requerir la definición estricta de la ruta
@@ -158,6 +159,9 @@ export default function MovieDetails() {
 
   return (
     <main>
+      <div className="mx-auto max-w-7xl px-4 pt-5">
+        <BackToHomeButton />
+      </div>
       <MovieHero movie={movie} onTrailer={() => setShowTrailer(true)} />
 
       {showTrailer && (

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import type { UpcomingMovie } from '../interfaces/upcoming.interface';
 import { getUpcomingMovies, subscribeToUpcomingNotification } from '../services/upcomingServices';
 import { CountdownTimer } from '../components/CountdownTimer';
+import { BackToHomeButton } from '@/shared/components';
 
 export const UpcomingPage: React.FC = () => {
   const [movies, setMovies] = useState<UpcomingMovie[]>([]);
@@ -55,6 +56,7 @@ export const UpcomingPage: React.FC = () => {
               Activa notificaciones y recibe un aviso cuando llegue a la cartelera de tu ciudad.
             </p>
           </div>
+          <BackToHomeButton />
 
           <select
             value={selectedGenre}

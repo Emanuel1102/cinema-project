@@ -1,1 +1,0 @@
-export { Formulario } from "./formulario";

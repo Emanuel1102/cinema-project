@@ -3,9 +3,14 @@ import { useNavigate } from "react-router";
 import { getCountries, getDepartments, getCities, FALLBACK } from "../services/locationService";
 import type { SelectedLocation } from "../interfaces/location";
 
+type LocationFormProps = {
+  onComplete?: (location: SelectedLocation) => void;
+  onClose?: () => void;
+};
+
 const formatLabel = (value: string) => (value ? value.charAt(0).toUpperCase() + value.slice(1) : value);
 
-export function LocationForm() {
+export function LocationForm({ onComplete, onClose }: LocationFormProps) {
   const navigate = useNavigate();
 
   const [countries, setCountries] = useState<string[]>(FALLBACK.countries);
@@ -93,6 +98,10 @@ export function LocationForm() {
     } catch {
       /* ignore */
     }
+    if (onComplete) {
+      onComplete(selectedLocation);
+      return;
+    }
     navigate("/movies", { state: selectedLocation });
   }
 
@@ -100,8 +109,8 @@ export function LocationForm() {
     "w-full rounded-2xl border border-white/10 bg-[#0F172A]/70 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-[#818CF8] focus:ring-2 focus:ring-[#818CF8]/20 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400";
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#0F172A] p-5 text-white">
-      <div className="w-full max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-[#111827]/90 shadow-[0_30px_80px_rgba(15,23,42,0.7)] backdrop-blur-xl">
+    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F172A]/95 p-5 text-white backdrop-blur-sm">
+      <div onClick={(event) => event.stopPropagation()} className="w-full max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-[#111827]/90 shadow-[0_30px_80px_rgba(15,23,42,0.7)] backdrop-blur-xl">
         <div className="grid min-h-[680px] lg:grid-cols-[1.2fr_0.8fr]">
           <div className="relative hidden overflow-hidden bg-[#0F172A] p-8 lg:flex lg:flex-col lg:justify-end">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.45),transparent_40%),radial-gradient(circle_at_bottom_right,_rgba(219,39,119,0.28),transparent_35%)]" />
@@ -122,6 +131,12 @@ export function LocationForm() {
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#7C3AED] text-lg font-bold text-white shadow-lg shadow-[#7C3AED]/30">M</div>
             </div>
+
+            {onClose && (
+              <button onClick={onClose} aria-label="Cerrar selector de ubicación" className="absolute right-5 top-5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white">
+                Cerrar
+              </button>
+            )}
 
             <div className="space-y-5">
               <div className="space-y-2">
@@ -167,6 +182,3 @@ export function LocationForm() {
     </div>
   );
 }
-
-
-

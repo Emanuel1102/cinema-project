@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router";
 import { toast } from "sonner";
 import { useReservations } from "@/lib/store";
+import { LocationForm } from "./CountryForm";
+import type { SelectedLocation } from "../interfaces/location";
 
 const formatLocationLabel = (value: string) => {
   return value
@@ -35,13 +37,11 @@ export const Header = () => {
     return "Bogotá";
   })();
   const [cityLabel, setCityLabel] = useState(initialCityLabel);
+  const [isLocationFormOpen, setIsLocationFormOpen] = useState(false);
 
-  function handleChangeLocation() {
-    const nextCity = window.prompt("¿Dónde estamos?", cityLabel)?.trim();
-    if (!nextCity) return;
-
-    window.localStorage.setItem("cinemaSelectedLocation", JSON.stringify({ city: nextCity }));
-    setCityLabel(nextCity);
+  function handleLocationComplete(selectedLocation: SelectedLocation) {
+    setCityLabel(formatLocationLabel(selectedLocation.city));
+    setIsLocationFormOpen(false);
   }
 
   function handleReservations() {
@@ -77,7 +77,7 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button onClick={handleChangeLocation} className="hidden items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition duration-200 hover:bg-white/10 sm:flex">
+          <button onClick={() => setIsLocationFormOpen(true)} className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition duration-200 hover:bg-white/10">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
@@ -98,6 +98,12 @@ export const Header = () => {
           </Link>
         </div>
       </div>
+      {isLocationFormOpen && (
+        <LocationForm
+          onComplete={handleLocationComplete}
+          onClose={() => setIsLocationFormOpen(false)}
+        />
+      )}
     </header>
   );
 };
