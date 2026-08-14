@@ -3,7 +3,6 @@ import { createBrowserRouter } from "react-router";
 import { UpcomingPage } from "./features/billboard/pages/UpcomingPage";
 import { HomeMovies } from "./features/billboard/layouts/HomeMovies";
 import { MoviesOnBillboard } from "./features/billboard/layouts/MoviesOnBillboard";
-// import { ProfilePage } from './features/auth/pages/ProfilePage';
 import { RegisterPage } from "./features/auth/pages/register/RegisterPage";
 import { LoginPage } from "./features/auth/pages/login/LoginPage";
 
@@ -14,7 +13,7 @@ export const appRouter = createBrowserRouter([
   },
   {
     path: "/auth",
-    element: 'Renderizar aqui tus rutas de auth',
+    element: "Renderizar aqui tus rutas de auth",
   },
   {
     path: "/movies",
@@ -32,10 +31,6 @@ export const appRouter = createBrowserRouter([
         path: "upcoming",
         element: <UpcomingPage />,
       },
-      // {
-      //   path: "profile",
-      //   element: <ProfilePage />,
-      // },
     ],
   },
   {
