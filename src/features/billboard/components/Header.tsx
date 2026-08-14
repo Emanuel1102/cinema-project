@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router";
+import { toast } from "sonner";
+import { useReservations } from "@/lib/store";
 
 const formatLocationLabel = (value: string) => {
   return value
@@ -9,8 +12,9 @@ const formatLocationLabel = (value: string) => {
 
 export const Header = () => {
   const location = useLocation();
+  const { reservations } = useReservations();
 
-  const cityLabel = (() => {
+  const initialCityLabel = (() => {
     const stateCity = (location.state as { city?: string } | null)?.city;
     if (stateCity) return formatLocationLabel(stateCity);
 
@@ -30,6 +34,23 @@ export const Header = () => {
 
     return "Bogotá";
   })();
+  const [cityLabel, setCityLabel] = useState(initialCityLabel);
+
+  function handleChangeLocation() {
+    const nextCity = window.prompt("¿Dónde estamos?", cityLabel)?.trim();
+    if (!nextCity) return;
+
+    window.localStorage.setItem("cinemaSelectedLocation", JSON.stringify({ city: nextCity }));
+    setCityLabel(nextCity);
+  }
+
+  function handleReservations() {
+    toast.info(
+      reservations.length
+        ? `Tienes ${reservations.length} reserva${reservations.length === 1 ? "" : "s"} simulada${reservations.length === 1 ? "" : "s"}.`
+        : "Aún no tienes reservas.",
+    );
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0F172A]/85 backdrop-blur-md shadow-[0_10px_30px_rgba(15,23,42,0.5)]">
@@ -56,7 +77,7 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button className="hidden items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 sm:flex">
+          <button onClick={handleChangeLocation} className="hidden items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition duration-200 hover:bg-white/10 sm:flex">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
@@ -64,7 +85,7 @@ export const Header = () => {
             {cityLabel}
           </button>
 
-          <button className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-200 hover:bg-white/5">
+          <button onClick={handleReservations} aria-label="Ver reservas" className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-200 transition duration-200 hover:bg-white/5 hover:scale-105">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>

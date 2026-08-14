@@ -2,10 +2,14 @@ import React from 'react'
 import type { LoginPayload } from '../../interfaces'
 import { login } from '../../services/api'
 import { Link } from 'react-router'
+import { useNavigate } from 'react-router'
+import { useAuth } from '@/lib/store'
 
 const initialState: LoginPayload = { email: '', password: '' }
 
 export const LoginForm: React.FC = () => {
+  const navigate = useNavigate()
+  const { login: saveUser } = useAuth()
   const [form, setForm] = React.useState(initialState)
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [submitting, setSubmitting] = React.useState(false)
@@ -40,8 +44,9 @@ export const LoginForm: React.FC = () => {
       return
     }
 
+    saveUser(form.email)
     setServerMessage('Has iniciado sesión correctamente. Redirigiendo...')
-    window.location.href = '/'
+    navigate('/movies')
   }
 
   return (

@@ -11,7 +11,7 @@ import {
   savePendingScreening,
   type Screening,
 } from "@/lib/movies-api";
-import { useAuth, useLocation } from "@/lib/store";
+import { useAuth, useLocation, useReservations } from "@/lib/store";
 import { MovieHero } from "@/features/billboard/components/MovieItems/MovieHero";
 import { TrailerModal } from "@/features/billboard/components/MovieItems/TrailerModal";
 import { MovieInfo } from "@/features/billboard/components/MovieItems/MovieInfo";
@@ -25,6 +25,7 @@ export default function MovieDetails() {
   const { movieId } = useParams() as { movieId: string };
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { add } = useReservations();
   const { location } = useLocation();
 
   const days = useMemo(() => next7Days(), []);
@@ -113,13 +114,25 @@ export default function MovieDetails() {
       toast.error("Selecciona un horario disponible");
       return;
     }
-    savePendingScreening(selectedScreening);
     if (!user) {
-      toast.error("Inicia sesión para comprar tus entradas");
+      toast.error("Inicia sesión para reservar una función");
       navigate("/login");
       return;
     }
-    toast.success("Función guardada. Podrás seleccionar tus asientos al continuar la compra.");
+    if (!movie) return;
+
+    savePendingScreening(selectedScreening);
+    add({
+      movieId: movie.id,
+      movieTitle: movie.title,
+      date: selectedScreening.date,
+      time: selectedScreening.time,
+      format: selectedScreening.format,
+      complex: selectedScreening.complex,
+      seats: 1,
+      total: selectedScreening.price,
+    });
+    toast.success("Reserva simulada guardada correctamente.");
   }
 
   if (isMovieLoading) {

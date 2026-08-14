@@ -85,7 +85,6 @@ export function fetchFunctions(movieId: string, cityId: string | null): Promise<
 
 /** GET /movies/{id}/recommendations */
 export function fetchRecommendations(movieId: string): Promise<Movie[]> {
-  console.log("Fetching recommendations for movie ID:", movies); // Debugging line
   return delay(
     movies.filter((m) => m.id !== movieId).slice(0, 4),
     350,
