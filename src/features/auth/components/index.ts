@@ -1,0 +1,7 @@
+export { RegisterForm } from './ComponentsRegister/RegisterForm'
+export { LoginForm } from './ComponentsLogin/LoginForm'
+export { ProgressIndicator } from './ComponentsRegister/ProgressIndicator'
+export { PasswordStrengthMeter } from './ComponentsRegister/PasswordStrengthMeter'
+export { CaptchaStub } from './ComponentsRegister/CaptchaStub'
+export { Confirmation } from './ComponentsRegister/Confirmation'
+export { ActivationPage } from './ComponentsRegister/ActivationPage'
