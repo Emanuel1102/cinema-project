@@ -1,94 +1,66 @@
 @import "tailwindcss";
 
-html, body, #root {
-  background-color: #070913 !important;
-  color: #ffffff;
+@theme {
+  --color-background: #070913;
+  --color-foreground: #e8e8ed;
+  --color-primary: #6366f1;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #1e1e2a;
+  --color-accent: #a78bfa;
+  --color-muted-foreground: #9ca3af;
+  --color-border: #2e2e3e;
+  --color-muted: #27273a;
+}
+
+:root {
+  --color-background: #070913;
+  --color-foreground: #e8e8ed;
+  --color-primary: #6366f1;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #1e1e2a;
+  --color-accent: #a78bfa;
+  --color-muted-foreground: #9ca3af;
+  --color-border: #2e2e3e;
+  --color-muted: #27273a;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-}
-:root {
-  --color-primary: #7C3AED;
-  --color-secondary: #818CF8;
-  --color-error: #DB2777;
-  --color-text: #0F172A;
-  --color-surface: rgba(255, 255, 255, 0.96);
-  --color-border: rgba(124, 58, 237, 0.15);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
-.surface-panel {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 1.75rem;
+body {
+  background:
+    radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(219, 39, 119, 0.12), transparent 30%),
+    #070913;
 }
 
-.shadow-card {
-  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.10);
-}
+button,
+select,
+input { font: inherit; }
 
-.field {
-  appearance: none;
-  width: 100%;
-  padding: 0.95rem 1rem;
-  border: 1px solid #d9d9ff;
-  border-radius: 1rem;
-  background: #ffffff;
-  color: var(--color-text);
-  font-size: 0.95rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-}
+.surface-panel { background-color: var(--color-secondary); border: 1px solid var(--color-border); border-radius: 1rem; }
+.shadow-card { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+.btn-primary { background-color: var(--color-primary); color: var(--color-primary-foreground); border: 0; border-radius: 0.75rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.15s; }
+.btn-primary:hover { background-color: #4f46e5; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-ghost { background: transparent; color: var(--color-foreground); border: 1px solid var(--color-border); border-radius: 0.75rem; font-weight: 500; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; }
+.btn-ghost:hover { background-color: var(--color-secondary); border-color: var(--color-accent); }
+.chip, .chip-accent { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; }
+.chip { font-weight: 500; background-color: var(--color-secondary); border: 1px solid var(--color-border); color: var(--color-foreground); }
+.chip:hover { border-color: var(--color-accent); }
+.chip-accent { font-weight: 600; background-color: var(--color-primary); color: var(--color-primary-foreground); border: 1px solid var(--color-primary); }
 
-.field:focus {
-  outline: none;
-  border-color: var(--color-secondary);
-  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.18);
-  background: #fff;
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 999px; }
+::-webkit-scrollbar-track { background: transparent; }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-primary);
-  color: #ffffff;
-  border-radius: 1rem;
-  border: 1px solid transparent;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.btn-primary:hover {
-  background-color: #6d28d9;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.text-muted-foreground {
-  color: #64748b;
-}
-
-.text-primary {
-  color: var(--color-text);
-}
-
-.text-secondary {
-  color: var(--color-secondary);
-}
-
-.text-accent {
-  color: var(--color-primary);
-}
-
-.text-error {
-  color: var(--color-error);
-}
-
-.bg-surface-soft {
-  background: rgba(124, 58, 237, 0.06);
-}
-
-.border-accent {
-  border-color: rgba(124, 58, 237, 0.25);
-}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; color: #e2e8f0; background-color: #0f172a; }

@@ -44,7 +44,7 @@ function validatePhone(p: string) {
 }
 
 function validateDocument(n: string) {
-  return /^[A-Za-z0-9\-]{4,20}$/.test(n)
+  return /^[A-Za-z0-9-]{4,20}$/.test(n)
 }
 
 // Note: validation functions are intentionally straightforward and
@@ -130,7 +130,7 @@ export const RegisterForm: React.FC = () => {
     if (!res.ok) {
       // Map backend errors to fields if provided
       const map: Record<string, string> = {}
-      ;(res.errors || []).forEach((er: any) => {
+      ;(res.errors || []).forEach((er) => {
         if (er.field) map[er.field] = er.message
       })
       if (res.message && !(res.errors && res.errors.length)) {

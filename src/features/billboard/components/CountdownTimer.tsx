@@ -4,24 +4,24 @@ interface CountdownTimerProps {
   targetDate: string;
 }
 
-export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
-  const calculateTimeleft = () => {
-    const difference = +new Date(targetDate) - +new Date();
-    if (difference <= 0) return null;
+function calculateTimeleft(targetDate: string) {
+  const difference = +new Date(targetDate) - Date.now();
+  if (difference <= 0) return null;
 
-    return {
-      dias: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      horas: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutos: Math.floor((difference / 1000 / 60) % 60),
-      segundos: Math.floor((difference / 1000) % 60),
-    };
+  return {
+    dias: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    horas: Math.floor((difference / (1000 * 60 * 60)) % 24),
+    minutos: Math.floor((difference / 1000 / 60) % 60),
+    segundos: Math.floor((difference / 1000) % 60),
   };
+}
 
-  const [timeleft, setTimeleft] = useState(calculateTimeleft());
+export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
+  const [timeleft, setTimeleft] = useState(() => calculateTimeleft(targetDate));
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeleft(calculateTimeleft());
+      setTimeleft(calculateTimeleft(targetDate));
     }, 1000);
     return () => clearInterval(timer);
   }, [targetDate]);

@@ -23,14 +23,14 @@ const ALL_BENEFITS: Benefit[] = [
     id: 'lounge',
     title: 'Salas VIP Lounges',
     description: 'Acceso ilimitado a áreas de descanso premium antes de tu función.',
-    requiredLevel: 'PLATINO',
+    requiredLevel: 'PLATA',
     iconPath: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
   },
   {
     id: 'popcorn',
     title: 'Refill de Palomitas',
     description: 'Un refill gratis en palomitas grandes por visita.',
-    requiredLevel: 'PLATINO',
+    requiredLevel: 'PLATA',
     iconPath: 'M12 8v13m0-13V3m0 5l-4-3m4 3l4-3M5 21h14a2 2 0 002-2V9.5a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 9.5V19a2 2 0 002 2z',
   },
   {
@@ -44,9 +44,10 @@ const ALL_BENEFITS: Benefit[] = [
 
 // Jerarquía para comparar qué nivel es mayor
 const LEVEL_ORDER: Record<MembershipLevel, number> = {
-  ORO: 1,
-  PLATINO: 2,
-  DIAMANTE: 3,
+  BRONCE: 1,
+  PLATA: 2,
+  ORO: 3,
+  DIAMANTE: 4,
 };
 
 export const ProfilePage: React.FC = () => {

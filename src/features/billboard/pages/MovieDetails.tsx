@@ -1,8 +1,8 @@
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, Ticket } from "lucide-react";
 import { toast } from "sonner";
-import { cities, dateKey, formatCOP, next7Days } from "@/lib/data";
+import { cities, dateKey, formatCOP, next7Days, type Movie } from "@/lib/data";
 import {
   fetchFunctions,
   fetchMovie,
@@ -12,17 +12,17 @@ import {
   type Screening,
 } from "@/lib/movies-api";
 import { useAuth, useLocation } from "@/lib/store";
-import { MovieHero } from "@/components/movie/MovieHero";
-import { TrailerModal } from "@/components/movie/TrailerModal";
-import { MovieInfo } from "@/components/movie/MovieInfo";
-import { CastList } from "@/components/movie/CastList";
-import { ShowtimeFilters } from "@/components/movie/ShowtimeFilters";
-import { ShowtimeList } from "@/components/movie/ShowtimeList";
-import { Recommendations } from "@/components/movie/Recommendations";
+import { MovieHero } from "@/features/billboard/components/MovieItems/MovieHero";
+import { TrailerModal } from "@/features/billboard/components/MovieItems/TrailerModal";
+import { MovieInfo } from "@/features/billboard/components/MovieItems/MovieInfo";
+import { CastList } from "@/features/billboard/components/MovieItems/CastList";
+import { ShowtimeFilters } from "@/features/billboard/components/MovieItems/ShowtimeFilters";
+import { ShowtimeList } from "@/features/billboard/components/MovieItems/ShowtimeList";
+import { Recommendations } from "@/features/billboard/components/MovieItems/Recommendations";
 
 export default function MovieDetails() {
   // Obtenemos el movieId de los parámetros de la URL sin requerir la definición estricta de la ruta
-  const { movieId } = useParams({ strict: false }) as { movieId: string };
+  const { movieId } = useParams() as { movieId: string };
   const navigate = useNavigate();
   const { user } = useAuth();
   const { location } = useLocation();
@@ -30,14 +30,14 @@ export default function MovieDetails() {
   const days = useMemo(() => next7Days(), []);
   const cityOptions = useMemo(() => cities.filter((c) => c.hasCinemas), []);
 
-  const [cityId, setCityId] = useState("");
+  const [cityId, setCityId] = useState(() => location?.cityId ?? "");
   const [selectedDay, setSelectedDay] = useState(() => dateKey(days[0]!));
   const [format, setFormat] = useState("");
   const [selected, setSelected] = useState<Screening | null>(null);
   const [showTrailer, setShowTrailer] = useState(false);
 
   // Estados manuales para reemplazar React Query
-  const [movie, setMovie] = useState<any>(null);
+  const [movie, setMovie] = useState<Movie | null>(null);
   const [isMovieLoading, setIsMovieLoading] = useState(true);
   const [isMovieError, setIsMovieError] = useState(false);
 
@@ -45,19 +45,12 @@ export default function MovieDetails() {
   const [isFunctionsLoading, setIsFunctionsLoading] = useState(false);
   const [isFunctionsError, setIsFunctionsError] = useState(false);
 
-  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<Movie[]>([]);
   const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(true);
-
-  useEffect(() => {
-    if (location?.cityId) setCityId(location.cityId);
-  }, [location?.cityId]);
 
   // Cargar detalles de la película con promesas simples (.then)
   useEffect(() => {
     if (!movieId) return;
-    setIsMovieLoading(true);
-    setIsMovieError(false);
-
     fetchMovie(movieId)
       .then((data) => {
         setMovie(data);
@@ -76,8 +69,6 @@ export default function MovieDetails() {
   // Cargar funciones de la película
   useEffect(() => {
     if (!movieId) return;
-    setIsFunctionsLoading(true);
-    setIsFunctionsError(false);
 
     fetchFunctions(movieId, cityId || null)
       .then((data) => {
@@ -93,8 +84,6 @@ export default function MovieDetails() {
   // Cargar recomendaciones
   useEffect(() => {
     if (!movieId) return;
-    setIsRecommendationsLoading(true);
-
     fetchRecommendations(movieId)
       .then((data) => {
         setRecommendations(data);
@@ -115,31 +104,22 @@ export default function MovieDetails() {
     [upcoming, selectedDay, format],
   );
 
-  useEffect(() => {
-    setSelected((prev) => (prev && visible.some((s) => s.id === prev.id) ? prev : null));
-  }, [visible]);
+  const selectedScreening = selected && visible.some((screening) => screening.id === selected.id)
+    ? selected
+    : null;
 
   function startCheckout() {
-    if (!selected) {
+    if (!selectedScreening) {
       toast.error("Selecciona un horario disponible");
       return;
     }
-    savePendingScreening(selected);
+    savePendingScreening(selectedScreening);
     if (!user) {
       toast.error("Inicia sesión para comprar tus entradas");
-      navigate({ to: "/login" });
+      navigate("/login");
       return;
     }
-    navigate({
-      to: "/asientos/$movieId",
-      params: { movieId },
-      search: {
-        date: selected.date,
-        time: selected.time,
-        format: selected.format,
-        complex: selected.complex,
-      },
-    });
+    toast.success("Función guardada. Podrás seleccionar tus asientos al continuar la compra.");
   }
 
   if (isMovieLoading) {
@@ -225,15 +205,15 @@ export default function MovieDetails() {
             )}
 
             <div className="mt-5 border-t border-border pt-4">
-              {selected && (
+              {selectedScreening && (
                 <p className="mb-2 text-xs text-muted-foreground">
-                  {selected.complex} · {selected.date} · {selected.time} · {selected.format} ·{" "}
-                  {formatCOP(selected.price)}
+                  {selectedScreening.complex} · {selectedScreening.date} · {selectedScreening.time} · {selectedScreening.format} ·{" "}
+                  {formatCOP(selectedScreening.price)}
                 </p>
               )}
               <button
                 onClick={startCheckout}
-                disabled={!selected}
+                disabled={!selectedScreening}
                 className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Ticket className="size-4" /> Iniciar compra

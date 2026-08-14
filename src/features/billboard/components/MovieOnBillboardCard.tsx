@@ -1,68 +1,60 @@
-
 export const MovieOnBillboad = () => {
   return (
-    
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group flex flex-col">
+    <div className="flex flex-col overflow-hidden rounded-[22px] border border-white/10 bg-[#111827] shadow-[0_12px_36px_rgba(15,23,42,0.45)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#818CF8]/40 hover:shadow-[0_20px_50px_rgba(124,58,237,0.25)]">
+      <div className="relative overflow-hidden">
+        <img
+          alt="titulo de la pelicula aqui"
+          className="h-72 w-full object-cover"
+          src="https://images.unsplash.com/photo-1593538573197-4e3ee8a864d0?w=400&h=600&fit=crop&auto=format"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/20 to-transparent" />
+        <div className="absolute left-2 top-2 rounded-full bg-[#DB2777] px-2 py-1 text-[10px] font-bold text-white shadow-md">
+          FLASH
+        </div>
+        <div className="absolute right-2 top-2 rounded-full border border-white/15 bg-[#0F172A]/60 px-2 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
+          PG-13
+        </div>
+      </div>
 
-        <div className="relative overflow-hidden">
-            <img alt="titulo de la pelicula aqui" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1593538573197-4e3ee8a864d0?w=400&amp;h=600&amp;fit=crop&amp;auto=format"></img>
-            <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent"></div>
-            <div className="absolute top-2 left-2 flex flex-col gap-1">
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white flex items-center gap-1">🔥 FLASH</span>
-            </div>
-            <div className="absolute top-2 right-2">
-                <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold border bg-amber-50 text-amber-700 border-amber-200">PG-13</span>
-            </div>
-            <div className="absolute bottom-2 left-2">
-                <span className="flex items-center gap-1">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                    </svg>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                    </svg>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                    </svg>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="2">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                    </svg>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
-                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                    </svg>
-                    <span className="text-xs font-semibold text-amber-600 ml-0.5">4.0</span>
-                </span>
-            </div>
+      <div className="flex flex-1 flex-col gap-3 p-3">
+        <div>
+          <h3 className="text-base font-bold text-white">Titulo</h3>
+          <p className="mt-1 text-xs text-slate-400">Genero · duracion min</p>
         </div>
 
-        <div className="p-3 flex flex-col gap-2 flex-1">
-            <div>
-                <h3 className="text-gray-900"> Titulo </h3>
-                <p className="text-xs text-gray-500 mt-0.5">Genero · duracion min</p>
-            </div>
-            <div className="flex gap-1 flex-wrap">
-                <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold border bg-gray-100 text-gray-600 border-gray-200">Formato</span>
-                <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold border bg-purple-50 text-purple-700 border-purple-200">VIP</span>
-                <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold border bg-gray-100 text-gray-600 border-gray-200">doblada, subtitulada o en ingles </span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Hoy 27 Jul</p>
-                <div className="flex flex-wrap gap-1.5">
-                    <button title="2D · Doblada" className="px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200">13:00 (hora)</button>
-                    <button title="VIP · Doblada" className="px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all hover:border-red-400 hover:text-red-600 hover:bg-red-50 cursor-pointer bg-white border-gray-200 text-gray-700">16:30 (hora)</button>
-                    <button title="2D · Doblada" className="px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all opacity-40 cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200">19:00 (hora)</button>
-                </div>
-            </div>
-            <div className="flex gap-2 mt-auto pt-1">
-                <button className="flex-1 py-2 rounded-xl text-xs font-bold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
-                    Ver detalle
-                </button>
-                <button className="bg-red-600 flex-1 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90 cursor-pointer">
-                    Comprar
-                </button>
-            </div>
+        <div className="flex flex-wrap gap-1.5">
+          <span className="rounded-full border border-[#7C3AED]/30 bg-[#7C3AED]/15 px-2 py-1 text-[10px] font-semibold text-[#818CF8]">
+            VIP
+          </span>
+          <span className="rounded-full border border-white/10 bg-slate-800 px-2 py-1 text-[10px] font-semibold text-slate-300">
+            Doblada
+          </span>
         </div>
+
+        <div className="mt-auto">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Hoy 27 Jul</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <button className="rounded-lg border border-white/10 bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-200">
+              13:00
+            </button>
+            <button className="rounded-lg bg-[#818CF8] px-2.5 py-1 text-xs font-semibold text-[#0F172A]">
+              16:30
+            </button>
+            <button className="rounded-lg border border-white/10 bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-200">
+              19:00
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-3 flex gap-2">
+          <button className="flex-1 rounded-xl border border-white/10 bg-slate-800 py-2 text-xs font-bold text-slate-200 hover:bg-slate-700">
+            Ver detalle
+          </button>
+          <button className="flex-1 rounded-xl bg-[#7C3AED] py-2 text-xs font-bold text-white hover:opacity-90">
+            Comprar
+          </button>
+        </div>
+      </div>
     </div>
-    
-  )
-}
+  );
+};
