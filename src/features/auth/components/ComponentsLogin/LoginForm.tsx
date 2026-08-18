@@ -44,7 +44,7 @@ export const LoginForm: React.FC = () => {
       return
     }
 
-    saveUser(form.email)
+    saveUser(form.email, undefined, res.accessToken)
     setServerMessage('Has iniciado sesión correctamente. Redirigiendo...')
     navigate('/movies')
   }

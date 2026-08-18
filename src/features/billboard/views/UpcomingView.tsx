@@ -1,19 +1,20 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import type { UpcomingMovie } from '../interfaces/upcoming.interface';
-import { getUpcomingMovies, subscribeToUpcomingNotification } from '../services/upcomingServices';
-import { CountdownTimer } from '../components/CountdownTimer';
-import { BackToHomeButton } from '@/shared/components';
+import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import type { UpcomingMovie } from "../interfaces/upcoming.interface";
+import { CountdownTimer } from "../components/CountdownTimer";
+import { BackToHomeButton } from "@/shared/components";
+import { fetchUpcomingMovies, subscribeToUpcomingNotification } from "@/lib/movies-api";
 
 export const UpcomingPage: React.FC = () => {
   const [movies, setMovies] = useState<UpcomingMovie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedGenre, setSelectedGenre] = useState<string>('ALL');
+  const [selectedGenre, setSelectedGenre] = useState<string>("ALL");
 
   useEffect(() => {
-    getUpcomingMovies().then((data) => {
-      setMovies(data);
-      setLoading(false);
-    });
+    fetchUpcomingMovies()
+      .then((data) => setMovies(data))
+      .catch(() => setMovies([]))
+      .finally(() => setLoading(false));
   }, []);
 
   const genres = useMemo(() => {
@@ -23,15 +24,18 @@ export const UpcomingPage: React.FC = () => {
   }, [movies]);
 
   const filteredMovies = useMemo(() => {
-    if (selectedGenre === 'ALL') return movies;
+    if (selectedGenre === "ALL") return movies;
     return movies.filter((m) => m.genres?.includes(selectedGenre));
   }, [movies, selectedGenre]);
 
   const handleNotify = async (movieId: string) => {
-    await subscribeToUpcomingNotification(movieId);
-    setMovies((prev) =>
-      prev.map((m) => (m.id === movieId ? { ...m, isNotified: true } : m))
-    );
+    try {
+      await subscribeToUpcomingNotification(movieId);
+      setMovies((prev) => prev.map((m) => (m.id === movieId ? { ...m, isNotified: true } : m)));
+      toast.success("Te avisaremos cuando llegue la película.");
+    } catch {
+      toast.error("No fue posible activar la notificación.");
+    }
   };
 
   if (loading) {
@@ -45,16 +49,10 @@ export const UpcomingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0b0f19] text-slate-100 p-6 md:p-12 font-sans">
       <div className="max-w-5xl mx-auto space-y-8">
-
-        {/* Cabecera con título y filtro */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Próximamente
-            </h1>
-            <p className="text-slate-400 text-sm md:text-base mt-1">
-              Activa notificaciones y recibe un aviso cuando llegue a la cartelera de tu ciudad.
-            </p>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Próximamente</h1>
+            <p className="text-slate-400 text-sm md:text-base mt-1">Activa notificaciones y recibe un aviso cuando llegue a la cartelera de tu ciudad.</p>
           </div>
           <BackToHomeButton />
 
@@ -65,14 +63,11 @@ export const UpcomingPage: React.FC = () => {
           >
             <option value="ALL">Todos los géneros</option>
             {genres.map((genre) => (
-              <option key={genre} value={genre}>
-                {genre}
-              </option>
+              <option key={genre} value={genre}>{genre}</option>
             ))}
           </select>
         </div>
 
-        {/* Lista de películas */}
         <div className="space-y-6">
           {filteredMovies.map((movie) => (
             <div
@@ -80,11 +75,7 @@ export const UpcomingPage: React.FC = () => {
               className="bg-[#151c2c] border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col md:flex-row h-full md:h-64 hover:border-slate-700 transition-all duration-300"
             >
               <div className="relative md:w-80 h-56 md:h-full shrink-0 bg-slate-900">
-                <img
-                  src={movie.posterUrl}
-                  alt={movie.title}
-                  className="w-full h-full object-cover"
-                />
+                <img src={movie.posterUrl} alt={movie.title} className="w-full h-full object-cover" />
                 <div className="absolute top-3 left-3">
                   <CountdownTimer targetDate={movie.releaseDate} />
                 </div>
@@ -94,32 +85,20 @@ export const UpcomingPage: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
                     {movie.genres?.map((genre, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-slate-800 text-purple-300 border border-purple-500/20 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                      >
+                      <span key={idx} className="bg-slate-800 text-purple-300 border border-purple-500/20 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                         {genre}
                       </span>
                     ))}
                   </div>
 
-                  <h2 className="text-2xl font-bold text-white tracking-tight">
-                    {movie.title}
-                  </h2>
-                  
-                  <p className="text-slate-300 text-sm line-clamp-3 h-14 leading-relaxed">
-                    {movie.synopsis}
-                  </p>
+                  <h2 className="text-2xl font-bold text-white tracking-tight">{movie.title}</h2>
+                  <p className="text-slate-300 text-sm line-clamp-3 h-14 leading-relaxed">{movie.synopsis}</p>
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-slate-800/80">
                   <div>
-                    <span className="block text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
-                      Estreno Estimado
-                    </span>
-                    <span className="text-sm font-medium text-slate-200">
-                      {movie.releaseDate}
-                    </span>
+                    <span className="block text-[10px] font-semibold tracking-wider text-slate-400 uppercase">Estreno Estimado</span>
+                    <span className="text-sm font-medium text-slate-200">{movie.releaseDate}</span>
                   </div>
 
                   <button
@@ -127,11 +106,11 @@ export const UpcomingPage: React.FC = () => {
                     onClick={() => handleNotify(movie.id)}
                     className={`px-5 py-2 rounded-xl font-medium text-xs transition-all duration-200 ${
                       movie.isNotified
-                        ? 'bg-slate-800 text-slate-400 border border-slate-700 cursor-not-allowed'
-                        : 'bg-purple-600 hover:bg-purple-500 text-white shadow-md active:scale-95'
+                        ? "bg-slate-800 text-slate-400 border border-slate-700 cursor-not-allowed"
+                        : "bg-purple-600 hover:bg-purple-500 text-white shadow-md active:scale-95"
                     }`}
                   >
-                    {movie.isNotified ? '✓ Notificación Activada' : '🔔 Notificarme'}
+                    {movie.isNotified ? "✓ Notificación Activada" : "🔔 Notificarme"}
                   </button>
                 </div>
               </div>

@@ -1,103 +1,121 @@
 # Multicine
 
-Aplicación web de cartelera de cine creada con React, Vite y TypeScript. Permite seleccionar una ubicación, consultar películas disponibles, ver sus detalles, reproducir tráileres y realizar reservas simuladas.
+Aplicación frontend para consulta de cartelera, próximos estrenos, ubicación y reserva de funciones en una experiencia de cine moderna con React + TypeScript + Vite + Tailwind CSS.
 
-La aplicación usa datos locales mientras el backend está en desarrollo. La lógica está preparada para sustituir esas fuentes simuladas por endpoints sin cambiar las vistas ni los componentes.
+El proyecto está preparado para consumir el backend real con los endpoints del contrato OpenAPI. La lógica de navegación, autenticación y cambio de ciudad se mantiene simple y clara, con un enfoque de componentes fáciles de entender y mantenimiento.
 
-## Funcionalidades
+## Requisitos
 
-- Selección de país, departamento y ciudad antes de entrar a la cartelera.
-- Cambio de ubicación desde el encabezado reutilizando el mismo formulario inicial.
-- Cartelera construida desde el arreglo `movies` de `src/lib/data.ts`.
-- Vista de detalle por película usando el identificador de cada película.
-- Filtros de funciones por fecha, formato y ciudad.
-- Tráileres y detalles de próximos estrenos en modales.
-- Inicio de sesión simulado y reservas guardadas en `localStorage`.
-- Notificaciones visuales para acciones como reservar o consultar reservas.
+- Node.js 18 o superior
+- npm o pnpm
+- Backend corriendo en http://localhost:3000
 
-## Tecnologías
+## Ejecución en desarrollo
 
-- React 19
-- TypeScript
-- Vite
-- React Router
-- Tailwind CSS
-- Sonner para notificaciones
-- Lucide React para iconos
+1. Instala dependencias:
+
+```bash
+npm install
+```
+
+2. Inicia la app:
+
+```bash
+npm run dev
+```
+
+3. Abre la URL indicada por Vite en el navegador.
+
+## Scripts disponibles
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run lint
+```
 
 ## Estructura del proyecto
 
 ```text
 src/
-├── assets/                 # Imágenes y recursos locales
+├── App.tsx                  # Provider principal de rutas y notificaciones
+├── appRouter.tsx            # Definición de rutas de la aplicación
+├── index.css                # Estilos globales y clases base de Tailwind
+├── assets/                  # Imágenes y recursos visuales
 ├── features/
 │   ├── auth/
-│   │   ├── components/     # Formularios y piezas reutilizables de autenticación
-│   │   ├── interfaces/     # Tipos de usuario y autenticación
-│   │   ├── services/       # Funciones simuladas de autenticación y perfil
-│   │   └── views/          # Pantallas de login, registro y perfil
+│   │   ├── components/      # Login, registro y componentes auxiliares
+│   │   ├── interfaces/      # Tipos de autenticación y perfil
+│   │   ├── services/        # Integración de login y registro con backend
+│   │   └── views/           # Páginas de login, registro y perfil
 │   └── billboard/
-│       ├── components/     # Header, footer, formulario, modales y componentes de película
-│       ├── interfaces/     # Tipos de ubicación, películas y próximos estrenos
-│       ├── layouts/        # Estructura compartida de las pantallas de cartelera
-│       ├── services/       # Servicios simulados de ubicación y próximos estrenos
-│       └── views/          # Pantallas de ubicación, cartelera, detalle y próximos estrenos
+│       ├── components/      # Header, Footer, modal de ubicación, trailers, etc.
+│       ├── interfaces/      # Tipos de ciudades, películas, próximos estrenos
+│       ├── layouts/         # Layout base de la cartelera
+│       ├── services/        # Servicios legacy y compatibilidad
+│       └── views/           # Cartelera, detalle, próximos estrenos y ubicación
 ├── lib/
-│   ├── data.ts             # Datos simulados principales: películas, ciudades y funciones
-│   ├── movies-api.ts       # Capa de consultas de películas y reservas pendientes
-│   └── store.ts            # Estado compartido persistido en localStorage
-├── App.tsx                 # Proveedor de rutas y notificaciones
-├── appRouter.tsx           # Definición de rutas de la aplicación
-└── index.css               # Estilos globales y utilidades visuales
+│   ├── data.ts              # Datos locales de soporte y catálogo mock
+│   ├── movies-api.ts        # Capa central para fetch a endpoints reales
+│   └── store.ts             # Estado global persistido para usuario, ubicación y reservas
+├── shared/
+│   └── components/          # Botón de regreso y utilidades compartidas
+└── main.tsx                 # Punto de entrada de React
 ```
 
-## Flujo de datos actual
+## Flujo de rutas principales
 
-1. `src/lib/data.ts` contiene el arreglo `movies`; cada objeto tiene un `id` único.
-2. La cartelera consume ese arreglo y navega a `/movies/:movieId` al seleccionar **Ver detalle**.
-3. `src/lib/movies-api.ts` centraliza las funciones `fetchMovie`, `fetchFunctions` y `fetchRecommendations`. Actualmente responden con datos locales y son el punto donde se conectarán los endpoints reales.
-4. `src/lib/store.ts` guarda ubicación, usuario y reservas simuladas en `localStorage` para que estén disponibles entre componentes.
+- `/` → selector inicial de ciudad / ubicación
+- `/login` → inicio de sesión
+- `/register` → creación de cuenta
+- `/movies` → cartelera principal
+- `/movies/details/:movieId` → detalle de una película y selección de funciones
+- `/movies/upcoming` → próximos estrenos y suscripción**
+- `/movies/profile` → perfil del usuario**
 
-## Rutas principales
+## Estado global y contexto
 
-| Ruta | Pantalla |
-| --- | --- |
-| `/` | Selector inicial de ubicación |
-| `/login` | Inicio de sesión |
-| `/register` | Registro |
-| `/movies` | Cartelera |
-| `/movies/:movieId` | Detalle de una película |
-| `/movies/upcoming` | Próximos estrenos |
-| `/movies/profile` | Perfil de usuario |
+El proyecto usa un store simple con localStorage para persistir:
 
-## Ejecutar el proyecto localmente
+- usuario autenticado
+- token de sesión
+- ubicación activa del usuario
+- reservas en memoria del navegador
 
-1. Instala Node.js en una versión actual LTS.
-2. Instala las dependencias:
+La lógica central está en [src/lib/store.ts](src/lib/store.ts), donde se guardan y leen estos valores para que el Header, la cartelera y la vista de detalle estén sincronizados.
 
-   ```bash
-   npm install
-   ```
+## Endpoints integrados del backend
 
-3. Inicia el entorno de desarrollo:
+La aplicación consume los siguientes endpoints del backend en http://localhost:3000:
 
-   ```bash
-   npm run dev
-   ```
+- Auth y usuarios
+  - POST /api/users/auth
+  - POST /api/users
+  - PATCH /api/users/location
 
-4. Abre en el navegador la dirección indicada por Vite.
+- Películas y cartelera
+  - GET /api/v1/movies/weekly?cityId={id}
+  - GET /api/v1/movies/today?cityId={id}
+  - GET /api/v1/movies/upcoming
+  - GET /api/movies/{id}
+  - GET /api/movies/{id}/functions?cityId={id}
 
-## Comandos disponibles
+- Ubicación
+  - GET /api/cities
 
-```bash
-npm run dev    # Inicia Vite en modo desarrollo
-npm run lint   # Revisa errores de estilo y TypeScript con ESLint
-npm run build  # Valida TypeScript y genera la versión de producción
-npm run preview # Previsualiza la compilación de producción
-```
+- Notificaciones
+  - POST /api/v1/notifications/upcoming
 
-## Conectar el backend
+## Observaciones de implementación
 
-Cuando los endpoints estén disponibles, conserva las vistas y componentes. Solo reemplaza las respuestas simuladas de `src/lib/movies-api.ts`, los servicios de `src/features/*/services` y, si corresponde, la información local de `src/lib/data.ts` por llamadas con `fetch`.
+- La selección de ciudad ocurre desde el modal de ubicación y se persiste para reflejar el nombre de la ciudad y el cityId en la app.
+- La vista de detalle usa el id numérico o textual de la película provisto por la API y muestra sinopsis, duración, clasificación, trailer y funciones.
+- La autenticación valida si existe usuario y token antes de continuar con la reserva.
+- La navegación se mantiene con React Router y los botones de Header/Footer funcionan como enlaces o handlers reales.
 
-De esta forma se mantienen los mismos parámetros, estados de carga y handlers que ya consume la interfaz.
+## Recomendaciones
+
+- Asegúrate de que el backend esté ejecutándose antes de iniciar la aplicación frontend.
+- Si el backend devuelve un esquema ligeramente diferente al contrato, revisar los mappers en [src/lib/movies-api.ts](src/lib/movies-api.ts) antes de hacer cambios visuales.
+- Mantén los componentes simples y legibles para que el proyecto siga siendo fácil de extender.

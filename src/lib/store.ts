@@ -2,9 +2,10 @@ import { useCallback, useSyncExternalStore } from "react";
 import { cities, countries, departments, type City } from "./data";
 
 export type StoredLocation = {
-  countryId: string;
-  departmentId: string;
+  countryId?: string;
+  departmentId?: string;
   cityId: string;
+  cityName?: string;
 };
 
 export type Reservation = {
@@ -20,10 +21,11 @@ export type Reservation = {
   total: number;
 };
 
-export type User = { name: string; email: string };
+export type User = { name: string; email: string; token?: string };
 
 const LOCATION_KEY = "riwi:location";
 const USER_KEY = "riwi:user";
+const TOKEN_KEY = "riwi:token";
 const RESERVATIONS_KEY = "riwi:reservations";
 
 /**
@@ -68,6 +70,7 @@ function createPersistedStore<T>(key: string, fallback: T) {
 
 const locationStore = createPersistedStore<StoredLocation | null>(LOCATION_KEY, null);
 const userStore = createPersistedStore<User | null>(USER_KEY, null);
+const tokenStore = createPersistedStore<string | null>(TOKEN_KEY, null);
 const reservationsStore = createPersistedStore<Reservation[]>(RESERVATIONS_KEY, []);
 
 function usePersisted<T>(store: ReturnType<typeof createPersistedStore<T>>) {
@@ -107,16 +110,25 @@ export function useLocation() {
 
 export function useAuth() {
   const { value: user } = usePersisted(userStore);
+  const { value: token } = usePersisted(tokenStore);
 
-  const login = useCallback((email: string, name?: string) => {
-    const next: User = { email, name: name || email.split("@")[0]! };
+  const login = useCallback((email: string, name?: string, nextToken?: string) => {
+    const next: User = {
+      email,
+      name: name || email.split("@")[0] || "Usuario",
+      token: nextToken,
+    };
     userStore.set(next);
+    tokenStore.set(nextToken || null);
     return next;
   }, []);
 
-  const logout = useCallback(() => userStore.set(null), []);
+  const logout = useCallback(() => {
+    userStore.set(null);
+    tokenStore.set(null);
+  }, []);
 
-  return { user, login, logout };
+  return { user, token, login, logout };
 }
 
 export function useReservations() {

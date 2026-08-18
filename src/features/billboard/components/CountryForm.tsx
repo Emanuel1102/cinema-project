@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { getCountries, getDepartments, getCities, FALLBACK } from "../services/locationService";
+import { toast } from "sonner";
+import { useAuth } from "@/lib/store";
 import type { SelectedLocation } from "../interfaces/location";
 
 type LocationFormProps = {
@@ -8,101 +9,92 @@ type LocationFormProps = {
   onClose?: () => void;
 };
 
-const formatLabel = (value: string) => (value ? value.charAt(0).toUpperCase() + value.slice(1) : value);
+type ApiCity = { id: string | number; name: string };
+
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000";
 
 export function LocationForm({ onComplete, onClose }: LocationFormProps) {
   const navigate = useNavigate();
+  const { user, token } = useAuth();
 
-  const [countries, setCountries] = useState<string[]>(FALLBACK.countries);
-  const [departaments, setDepartaments] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-
-  const [country, setCountry] = useState<string>(FALLBACK.countries[0]);
-  const [departament, setDepartament] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-
-  // loading/error states omitted (not needed for now)
+  const [cities, setCities] = useState<ApiCity[]>([]);
+  const [selectedCityId, setSelectedCityId] = useState("");
+  const [selectedCityName, setSelectedCityName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    getCountries()
-      .then((list) => mounted && setCountries(list))
-      .catch(() => {
-        // fallback already set
+
+    fetch(`${API_BASE}/api/cities`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Error fetching cities");
+        const payload = await res.json();
+        const list = Array.isArray(payload) ? payload : payload.cities || payload.data || [];
+        if (!mounted) return;
+        setCities(list);
+        if (list.length > 0) {
+          setSelectedCityId(String(list[0].id));
+          setSelectedCityName(String(list[0].name));
+        }
       })
-      .finally(() => {});
+      .catch(() => {
+        if (!mounted) return;
+        toast.error("No se pudo cargar la lista de ciudades.");
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
 
     return () => {
       mounted = false;
     };
   }, []);
 
-  useEffect(() => {
-    let mounted = true;
-    if (!country) return;
-    getDepartments(country)
-      .then((list) => {
-        if (!mounted) return;
-        setDepartaments(list.length ? list : FALLBACK.departamentsByCountry[country] || []);
-      })
-      .catch(() => {
-        setDepartaments(FALLBACK.departamentsByCountry[country] || []);
-      })
-      .finally(() => {});
+  async function updateUserCity(cityId: string, cityName: string) {
+    if (!user || !token) return;
 
-    return () => {
-      mounted = false;
-    };
-  }, [country]);
-
-  useEffect(() => {
-    let mounted = true;
-    if (!departament) return;
-    getCities(departament)
-      .then((list) => {
-        if (!mounted) return;
-        setCities(list.length ? list : FALLBACK.citiesByDepartament[departament] || []);
-      })
-      .catch(() => {
-        setCities(FALLBACK.citiesByDepartament[departament] || []);
-      })
-      .finally(() => {});
-
-    return () => {
-      mounted = false;
-    };
-  }, [departament]);
-
-  function handleCountryChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setCountry(event.target.value);
-    setDepartament("");
-    setCity("");
-    setCities([]);
-  }
-
-  function handleDepartamentChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setDepartament(event.target.value);
-    setCity("");
-    setCities([]);
-  }
-
-  function handleCityChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setCity(event.target.value);
+    try {
+      await fetch(`${API_BASE}/api/users/location`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cityId, cityName }),
+      });
+    } catch {
+      // Ignoramos el error del backend para no bloquear la experiencia de la app.
+    }
   }
 
   function handleVerCartelera() {
-    if (!city) return;
-    const selectedLocation: SelectedLocation = { country, departament, city };
-    try {
-      window.localStorage.setItem("cinemaSelectedLocation", JSON.stringify(selectedLocation));
-    } catch {
-      /* ignore */
+    if (!selectedCityId || !selectedCityName) {
+      toast.error("Selecciona una ciudad para continuar.");
+      return;
     }
+
+    const selectedLocation: SelectedLocation = {
+      city: selectedCityName,
+      cityId: selectedCityId,
+      cityName: selectedCityName,
+    };
+
+    const savedLocation = {
+      cityId: selectedCityId,
+      cityName: selectedCityName,
+    };
+
+    window.localStorage.setItem("riwi:location", JSON.stringify(savedLocation));
+    if (user && token) {
+      void updateUserCity(selectedCityId, selectedCityName);
+    }
+
     if (onComplete) {
       onComplete(selectedLocation);
       return;
     }
-    navigate("/movies", { state: selectedLocation });
+
+    navigate("/movies", { state: { cityId: selectedCityId, city: selectedCityName } });
   }
 
   const selectClass =
@@ -140,41 +132,39 @@ export function LocationForm({ onComplete, onClose }: LocationFormProps) {
 
             <div className="space-y-5">
               <div className="space-y-2">
-                <label htmlFor="countries" className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#818CF8]">País</label>
-                <select name="countries" id="countries" value={country} onChange={handleCountryChange} className={selectClass}>
-                  {countries.map((c) => (
-                    <option key={c} value={c}>
-                      {formatLabel(c)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="departament" className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#818CF8]">Departamento</label>
-                <select name="departament" id="departament" value={departament} onChange={handleDepartamentChange} className={selectClass}>
-                  <option value="">Selecciona uno...</option>
-                  {departaments.map((depart) => (
-                    <option key={depart} value={depart}>
-                      {formatLabel(depart)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2">
                 <label htmlFor="city" className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-[#818CF8]">Ciudad</label>
-                <select name="city" id="city" value={city} onChange={handleCityChange} disabled={!departament} className={selectClass}>
-                  <option value="">Selecciona una ciudad...</option>
-                  {cities.map((cityName) => (
-                    <option key={cityName} value={cityName}>
-                      {formatLabel(cityName)}
-                    </option>
-                  ))}
+                <select
+                  name="city"
+                  id="city"
+                  value={selectedCityId}
+                  onChange={(event) => {
+                    const cityId = event.target.value;
+                    const cityFound = cities.find((city) => String(city.id) === cityId);
+                    setSelectedCityId(cityId);
+                    setSelectedCityName(cityFound ? String(cityFound.name) : "");
+                  }}
+                  disabled={loading || cities.length === 0}
+                  className={selectClass}
+                >
+                  {cities.length === 0 ? (
+                    <option value="">{loading ? "Cargando ciudades..." : "Sin ciudades disponibles"}</option>
+                  ) : (
+                    cities.map((city) => (
+                      <option key={String(city.id)} value={String(city.id)}>
+                        {city.name}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 
-              <button onClick={handleVerCartelera} disabled={!city} className="mt-2 w-full rounded-2xl bg-gradient-to-r from-[#7C3AED] via-[#818CF8] to-[#DB2777] px-4 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white shadow-lg shadow-[#7C3AED]/25 transition-all duration-200 hover:brightness-110 disabled:cursor-not-allowed disabled:from-slate-700 disabled:via-slate-700 disabled:to-slate-700 disabled:text-slate-400 disabled:shadow-none">Ver cartelera</button>
+              <button
+                onClick={handleVerCartelera}
+                disabled={!selectedCityId || !selectedCityName || loading}
+                className="mt-2 w-full rounded-2xl bg-gradient-to-r from-[#7C3AED] via-[#818CF8] to-[#DB2777] px-4 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white shadow-lg shadow-[#7C3AED]/25 transition-all duration-200 hover:brightness-110 disabled:cursor-not-allowed disabled:from-slate-700 disabled:via-slate-700 disabled:to-slate-700 disabled:text-slate-400 disabled:shadow-none"
+              >
+                Ver cartelera
+              </button>
             </div>
           </div>
         </div>

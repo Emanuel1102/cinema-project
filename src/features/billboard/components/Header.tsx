@@ -1,46 +1,30 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
 import { toast } from "sonner";
-import { useReservations } from "@/lib/store";
+import { useLocation as useSavedLocation, useReservations } from "@/lib/store";
 import { LocationForm } from "./CountryForm";
 import type { SelectedLocation } from "../interfaces/location";
 
-const formatLocationLabel = (value: string) => {
-  return value
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-};
-
 export const Header = () => {
-  const location = useLocation();
+  const routeLocation = useLocation();
   const { reservations } = useReservations();
+  const { location: savedLocation, save } = useSavedLocation();
 
-  const initialCityLabel = (() => {
-    const stateCity = (location.state as { city?: string } | null)?.city;
-    if (stateCity) return formatLocationLabel(stateCity);
-
-    if (typeof window !== "undefined") {
-      const savedLocation = window.localStorage.getItem("cinemaSelectedLocation");
-      if (savedLocation) {
-        try {
-          const parsedLocation = JSON.parse(savedLocation) as { city?: string };
-          if (parsedLocation.city) {
-            return formatLocationLabel(parsedLocation.city);
-          }
-        } catch {
-          return "Bogotá";
-        }
-      }
-    }
-
-    return "Bogotá";
-  })();
-  const [cityLabel, setCityLabel] = useState(initialCityLabel);
+  const routeCityName = (routeLocation.state as { city?: string } | null)?.city;
+  const cityLabel = savedLocation?.cityName || routeCityName || "Bogotá";
   const [isLocationFormOpen, setIsLocationFormOpen] = useState(false);
 
   function handleLocationComplete(selectedLocation: SelectedLocation) {
-    setCityLabel(formatLocationLabel(selectedLocation.city));
+    const nextCityName = selectedLocation.cityName || selectedLocation.city || "Bogotá";
+    const nextCityId = selectedLocation.cityId || selectedLocation.city || "bogota";
+
+    save({
+      cityId: nextCityId,
+      cityName: nextCityName,
+      countryId: selectedLocation.country,
+      departmentId: selectedLocation.departament,
+    });
+
     setIsLocationFormOpen(false);
   }
 

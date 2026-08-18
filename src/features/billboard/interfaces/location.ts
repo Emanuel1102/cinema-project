@@ -3,7 +3,9 @@ export type DepartamentCode = string;
 export type CityCode = string;
 
 export interface SelectedLocation {
-  country: CountryCode;
-  departament: DepartamentCode;
+  country?: CountryCode;
+  departament?: DepartamentCode;
   city: CityCode;
+  cityId?: string;
+  cityName?: string;
 }

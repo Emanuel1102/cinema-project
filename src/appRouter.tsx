@@ -18,7 +18,7 @@ export const appRouter = createBrowserRouter([
     children: [
       { index: true, element: <MoviesOnBillboard /> },
       { path: "upcoming", element: <UpcomingPage /> },
-      { path: ":movieId", element: <MovieDetails /> },
+      { path: "details/:movieId", element: <MovieDetails /> },
       { path: "profile", element: <ProfilePage /> },
     ],
   },
