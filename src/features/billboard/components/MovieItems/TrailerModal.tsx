@@ -37,7 +37,7 @@ export function TrailerModal({
             <X className="size-4" />
           </button>
         </div>
-        <div className="bg-black p-1 sm:p-2"><iframe title={`Tráiler de ${title}`} src={`https://www.youtube.com/embed/${trailerId}?autoplay=1`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowFullScreen className="aspect-video w-full rounded-[18px]" /></div>
+        <div className="bg-black p-1 sm:p-2"><iframe title={`Tráiler de ${title}`} src={`https://www.youtube.com/embed/62bIsvRcPv0?si=kx2OrTq2kwOJ4nBo${trailerId}?autoplay=1`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowFullScreen className="aspect-video w-full rounded-[18px]" /></div>
       </div>
     </div>
   );

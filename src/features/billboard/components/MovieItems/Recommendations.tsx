@@ -17,7 +17,7 @@ export function Recommendations({ movies, loading }: { movies: Movie[]; loading:
           {movies.map((m) => (
             <Link
               key={m.id}
-              to={`/movies/${m.id}`}
+              to={`/movies/details/${m.id}`}
               className="group rounded-xl p-2 transition hover:bg-secondary"
             >
               <img

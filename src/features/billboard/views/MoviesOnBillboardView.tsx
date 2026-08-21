@@ -55,7 +55,7 @@ export const MoviesOnBillboard = () => {
       return;
     }
 
-    window.open(`https://www.youtube.com/watch?v=${movie.trailerId}`, "_blank", "noopener,noreferrer");
+    window.open(`https://www.youtube.com/watch?v=62bIsvRcPv0${movie.trailerId}`, "_blank", "noopener,noreferrer");
   }
 
   const featuredMovie = movies[0] ?? null;
@@ -106,30 +106,35 @@ export const MoviesOnBillboard = () => {
           </div>
 
           {loading ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 items-stretch">
               {[0, 1, 2, 3, 4].map((item) => (
                 <div key={item} className="h-80 animate-pulse rounded-[22px] bg-slate-800/80" />
               ))}
             </div>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 items-stretch">
               {movies.map((movie) => (
-                <article key={movie.id} className="group overflow-hidden rounded-[22px] border border-white/10 bg-[#111827] shadow-[0_16px_40px_rgba(15,23,42,0.55)] transition duration-200 hover:-translate-y-1 hover:border-[#818CF8]/40">
-                  <div className="relative overflow-hidden">
-                    <img src={movie.poster} alt={`Póster de ${movie.title}`} className="h-72 w-full object-cover transition duration-500 group-hover:scale-105" />
+                <article key={movie.id} className="group flex flex-col h-full overflow-hidden rounded-[22px] border border-white/10 bg-[#111827] shadow-[0_16px_40px_rgba(15,23,42,0.55)] transition duration-200 hover:-translate-y-1 hover:border-[#818CF8]/40">
+                  <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-950">
+                    <img src={movie.poster} alt={`Póster de ${movie.title}`} className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] via-transparent to-transparent" />
                     <div className="absolute left-3 top-3 rounded-full bg-[#DB2777] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white">{movie.score.toFixed(1)}</div>
                   </div>
-                  <div className="space-y-4 p-4">
-                    <div><h3 className="text-lg font-bold text-white">{movie.title}</h3><p className="mt-1 text-xs text-slate-400">{movie.genres.join(" • ")} · {movie.duration} min</p></div>
-                    <div className="flex flex-wrap gap-2">
-                      {movie.formats.slice(0, 2).map((format) => <span key={format} className="rounded-full border border-[#7C3AED]/25 bg-[#7C3AED]/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#c4b5fd]">{format}</span>)}
-                      <span className="rounded-full border border-white/10 bg-slate-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-300">{movie.showtimes[0]?.audio}</span>
+                  <div className="flex flex-1 flex-col justify-between p-4 space-y-4">
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold text-white line-clamp-2 min-h-[52px] flex items-center">{movie.title}</h3>
+                      <p className="text-xs text-slate-400 line-clamp-1">{movie.genres.join(" • ")} · {movie.duration} min</p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {movie.showtimes.slice(0, 3).map((showtime) => <span key={showtime.time} className="rounded-lg border border-white/10 bg-slate-800 px-2.5 py-1.5 text-xs font-semibold text-slate-200">{showtime.time}</span>)}
+                    <div className="space-y-2.5">
+                      <div className="flex flex-wrap gap-2">
+                        {movie.formats.slice(0, 2).map((format) => <span key={format} className="rounded-full border border-[#7C3AED]/25 bg-[#7C3AED]/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#c4b5fd]">{format}</span>)}
+                        <span className="rounded-full border border-white/10 bg-slate-800 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-300">{movie.showtimes[0]?.audio}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {movie.showtimes.slice(0, 3).map((showtime) => <span key={showtime.time} className="rounded-lg border border-white/10 bg-slate-800 px-2.5 py-1.5 text-xs font-semibold text-slate-200">{showtime.time}</span>)}
+                      </div>
                     </div>
-                    <div className="flex gap-2 pt-1">
+                    <div className="flex gap-2 pt-2 border-t border-white/5 mt-auto">
                       <Link to={`/movies/details/${movie.id}`} className="flex-1 rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-center text-xs font-bold text-slate-200 transition duration-200 hover:bg-slate-700 hover:scale-[1.02] active:scale-95">Ver detalle</Link>
                       <button onClick={() => handleReserve(movie)} className="flex-1 rounded-xl bg-[#7C3AED] px-3 py-2 text-xs font-bold text-white transition duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-95">Reservar</button>
                     </div>
