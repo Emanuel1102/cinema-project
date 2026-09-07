@@ -79,6 +79,7 @@ function buildShowtimes(formats: string[], audios: Showtime["audio"][]): Showtim
   }));
 }
 
+// Puedes colocar la ID del video de YouTube o el enlace completo (ej: "https://www.youtube.com/watch?v=VIDEO_ID")
 export const movies: Movie[] = [
   {
     id: "spider-man-brand-new-day",
@@ -96,10 +97,10 @@ export const movies: Movie[] = [
     releaseDate: "2026-07-24",
     synopsis:
       "Tras los eventos de 'No Way Home', Peter Parker intenta llevar una vida universitaria anónima mientras patrulla las calles de Nueva York. Sin embargo, la aparición de una nueva amenaza callejera y rastros del multiverso lo obligarán a asumir de nuevo su identidad como Spider-Man.",
-    trailerId: "aqz-KE-bpKQ",
+    trailerId: "https://youtu.be/o8EccyRIwQQ?si=NuEQ8WG1IAkHbs9L",
     showtimes: buildShowtimes(["2D", "3D", "IMAX"], ["Subtitulada", "Doblada"]),
   },
-    {
+  {
     id: "halo-4-forward-unto-dawn",
     title: "Halo 4: Forward Unto Dawn",
     poster: poster2,
@@ -115,10 +116,10 @@ export const movies: Movie[] = [
     releaseDate: "2012-10-05",
     synopsis:
       "El cadete Thomas Lasky entrena en la Academia Militar Corbould para luchar contra los rebeldes humanos. Sin embargo, cuando la alianza alienígena Covenant invade el planeta, Lasky y sus compañeros deberán luchar por sobrevivir con la ayuda del legendario Master Chief.",
-    trailerId: "Ca3Y8xGctlE",
+    trailerId: "https://youtu.be/gCNHSfT0A8c?si=i243nGO2UnlXT7s8", // Cambia este ID o pega un enlace completo de YouTube aquí
     showtimes: buildShowtimes(["2D"], ["Subtitulada", "Doblada"]),
   },
-    {
+  {
     id: "cars-3",
     title: "Cars 3",
     poster: poster3,
@@ -134,10 +135,10 @@ export const movies: Movie[] = [
     releaseDate: "2017-06-16",
     synopsis:
       "Sorprendido por una nueva generación de corredores ultrarrápidos, el legendario Rayo McQueen queda relegado repentinamente del deporte que tanto ama. Para volver a las pistas, necesitará la ayuda de la joven entrenadora Cruz Ramírez y la inspiración del fabuloso Hudson Hornet.",
-    trailerId: "2LeOH9AGJQM",
+    trailerId: "2LeOH9AGJQM", // Cambia este ID o pega un enlace completo de YouTube aquí
     showtimes: buildShowtimes(["2D", "3D"], ["Subtitulada", "Doblada"]),
   },
-    {
+  {
     id: "deadpool",
     title: "Deadpool",
     poster: poster4,
@@ -153,9 +154,9 @@ export const movies: Movie[] = [
     releaseDate: "2016-02-12",
     synopsis:
       "Basada en el antihéroe más poco convencional de Marvel Comics, Deadpool cuenta la historia del origen del ex agente de las Fuerzas Especiales convertido en mercenario Wade Wilson, quien después de ser sometido a un experimento que lo deja con poderes de curación acelerada, adopta el alter ego Deadpool. Armado con sus nuevas habilidades y un sentido del humor oscuro y retorcido, Deadpool caza al hombre que casi destruye su vida.",
-    trailerId: "ONHBaC-pfsk",
+    trailerId: "ONHBaC-pfsk", // Cambia este ID o pega un enlace completo de YouTube aquí
     showtimes: buildShowtimes(["2D", "IMAX"], ["Subtitulada", "Doblada"]),
-}
+  },
 ];
 
 export const allGenres = [...new Set(movies.flatMap((m) => m.genres))].sort();
