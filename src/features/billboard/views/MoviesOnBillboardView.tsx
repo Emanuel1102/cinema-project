@@ -19,22 +19,26 @@ export const MoviesOnBillboard = () => {
     (location.state as { city?: string } | null)?.city || savedLocation?.cityName || "Bogotá";
 
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [prevCityId, setPrevCityId] = useState<string | null>(null);
   const [activeTrailerMovie, setActiveTrailerMovie] = useState<Movie | null>(null);
+
+  const loading = prevCityId !== selectedCityId;
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
 
     fetchMoviesByCity(selectedCityId)
       .then((items) => {
-        if (active) setMovies(items);
+        if (active) {
+          setMovies(items);
+          setPrevCityId(selectedCityId);
+        }
       })
       .catch(() => {
-        if (active) setMovies([]);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
+        if (active) {
+          setMovies([]);
+          setPrevCityId(selectedCityId);
+        }
       });
 
     return () => {
@@ -151,6 +155,4 @@ export const MoviesOnBillboard = () => {
       </div>
     </div>
   );
-};
-
 };
