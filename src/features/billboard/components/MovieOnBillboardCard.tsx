@@ -89,3 +89,4 @@ export const MovieOnBillboad = ({ movie, onReserve }: MovieOnBillboardProps) => 
     </article>
   );
 };
+
