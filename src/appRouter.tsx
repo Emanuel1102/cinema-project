@@ -8,6 +8,7 @@ import MovieDetails from "./features/billboard/views/MovieDetailsView";
 import { Formulario } from "./features/billboard/views/LocationView";
 import { UpcomingPage } from "./features/billboard/views/UpcomingView";
 
+
 export const appRouter = createBrowserRouter([
   { path: "/", element: <Formulario /> },
   { path: "/login", element: <LoginPage /> },
