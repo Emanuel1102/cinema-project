@@ -105,3 +105,6 @@ export const SeatItem = ({ seat, isSelected = false, onSelect }: SeatItemProps) 
 };
 
 export default SeatItem;
+
+
+
