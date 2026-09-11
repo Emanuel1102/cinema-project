@@ -1,10 +1,67 @@
 {
+  "countries": [
+    { "id": "co", "name": "Colombia" }
+  ],
+  "departments": [
+    { "id": "atl", "countryId": "co", "name": "Atlántico" },
+    { "id": "ant", "countryId": "co", "name": "Antioquia" },
+    { "id": "bog", "countryId": "co", "name": "Bogotá D.C." }
+  ],
+  "cities": [
+    { "id": "barranquilla", "departmentId": "atl", "name": "Barranquilla" },
+    { "id": "medellin", "departmentId": "ant", "name": "Medellín" },
+    { "id": "bogota", "departmentId": "bog", "name": "Bogotá" }
+  ],
+  "cinemas": [
+    { "id": "cine-1", "cityId": "barranquilla", "name": "CineColombia Buenavista" },
+    { "id": "cine-2", "cityId": "barranquilla", "name": "Cinemark Mallplaza" }
+  ],
+  "movies": [
+    {
+      "id": "m-101",
+      "title": "Cyberpunk: Edgerunners",
+      "synopsis": "En una distopía repleta de tecnología ciberimplantada, un joven de la calle decide convertirse en un mercenario edgerunner para sobrevivir.",
+      "duration": 120,
+      "genre": "Anime / Sci-Fi",
+      "rating": "16+",
+      "director": "Hiroyuki Imaishi",
+      "posterUrl": "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500",
+      "isUpcoming": false
+    },
+    {
+      "id": "m-102",
+      "title": "Chainsaw Man: Reze Arc",
+      "synopsis": "Denji continúa con su labor como Devil Hunter mientras un nuevo peligro con forma de misteriosa joven aparece en su camino.",
+      "duration": 105,
+      "genre": "Anime / Acción",
+      "rating": "18+",
+      "director": "Ryu Nakayama",
+      "posterUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500",
+      "isUpcoming": false
+    },
+    {
+      "id": "m-201",
+      "title": "Solo Leveling: Arise",
+      "synopsis": "El cazador de rango E más débil del mundo recibe una segunda oportunidad tras entrar en una mazmorra oculta.",
+      "duration": 115,
+      "genre": "Anime / Fantasía",
+      "rating": "14+",
+      "director": "Shunsuke Nakashige",
+      "posterUrl": "https://images.unsplash.com/photo-1563089145-599997674d42?w=500",
+      "isUpcoming": true,
+      "releaseDate": "2026-11-20"
+    }
+  ],
   "functions": [
     {
       "id": "f-101",
-      "movieTitle": "Cyberpunk: Edgerunners",
+      "movieId": "m-101",
+      "cinemaId": "cine-1",
       "roomName": "Sala 1 (Macro XE)",
+      "format": "2D Doblada",
       "showtime": "7:30 PM",
+      "date": "2026-09-15",
+      "basePrice": 15000,
       "rows": 3,
       "columns": 4,
       "seats": [
@@ -21,6 +78,38 @@
         { "id": "C-3", "row": "C", "number": 3, "type": "vip", "status": "available", "price": 22000 },
         { "id": "C-4", "row": "C", "number": 4, "type": "vip", "status": "available", "price": 22000 }
       ]
+    }
+  ],
+  "snack_categories": [
+    { "id": "combos", "name": "Combos" },
+    { "id": "crispetas", "name": "Crispetas" },
+    { "id": "bebidas", "name": "Bebidas" },
+    { "id": "dulces", "name": "Chocolatería y Dulces" }
+  ],
+  "snacks": [
+    {
+      "id": "snack-1",
+      "categoryId": "combos",
+      "name": "Combo Pareja",
+      "description": "1 Crispetas extragrandes + 2 gaseosas medianas + 1 chocolatina",
+      "price": 32000,
+      "imageUrl": "https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=400"
+    },
+    {
+      "id": "snack-2",
+      "categoryId": "crispetas",
+      "name": "Crispetas Grandes Mixtas",
+      "description": "Mitad caramelo y mitad sal en balde coleccionable",
+      "price": 19000,
+      "imageUrl": "https://images.unsplash.com/photo-1572177191856-3cde618dee1f?w=400"
+    },
+    {
+      "id": "snack-3",
+      "categoryId": "bebidas",
+      "name": "Gaseosa Grande 32oz",
+      "description": "Sabor a elección (Coca-Cola, Sprite o Cuatro)",
+      "price": 9500,
+      "imageUrl": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400"
     }
   ],
   "reservations": []
