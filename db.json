@@ -1,0 +1,27 @@
+{
+  "functions": [
+    {
+      "id": "f-101",
+      "movieTitle": "Cyberpunk: Edgerunners",
+      "roomName": "Sala 1 (Macro XE)",
+      "showtime": "7:30 PM",
+      "rows": 3,
+      "columns": 4,
+      "seats": [
+        { "id": "A-1", "row": "A", "number": 1, "type": "standard", "status": "available", "price": 15000 },
+        { "id": "A-2", "row": "A", "number": 2, "type": "standard", "status": "available", "price": 15000 },
+        { "id": "A-3", "row": "A", "number": 3, "type": "standard", "status": "sold", "price": 15000 },
+        { "id": "A-4", "row": "A", "number": 4, "type": "standard", "status": "sold", "price": 15000 },
+        { "id": "B-1", "row": "B", "number": 1, "type": "preferential", "status": "available", "price": 18000 },
+        { "id": "B-2", "row": "B", "number": 2, "type": "preferential", "status": "available", "price": 18000 },
+        { "id": "B-3", "row": "B", "number": 3, "type": "preferential", "status": "available", "price": 18000 },
+        { "id": "B-4", "row": "B", "number": 4, "type": "preferential", "status": "reserved", "price": 18000 },
+        { "id": "C-1", "row": "C", "number": 1, "type": "vip", "status": "available", "price": 22000 },
+        { "id": "C-2", "row": "C", "number": 2, "type": "vip", "status": "available", "price": 22000 },
+        { "id": "C-3", "row": "C", "number": 3, "type": "vip", "status": "available", "price": 22000 },
+        { "id": "C-4", "row": "C", "number": 4, "type": "vip", "status": "available", "price": 22000 }
+      ]
+    }
+  ],
+  "reservations": []
+}

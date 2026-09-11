@@ -13,14 +13,15 @@
     "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-router": "^1.170.25",
+    "axios": "^1.20.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.31.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router": "^8.3.0",
+    "react-router-dom": "^7.18.2",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0",
-    "react-router-dom": "^7.18.2",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
