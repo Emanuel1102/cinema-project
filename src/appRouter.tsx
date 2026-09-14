@@ -10,6 +10,7 @@ import { UpcomingPage } from "./features/billboard/views/UpcomingView";
 import { SeatSelectionView } from "./features/billboard/views/SeatSelectionView";
 import { CheckoutPaymentView } from "./features/billboard/views/CheckoutPaymentView";
 import { OrderSuccessView } from "./features/billboard/views/OrderSuccessView";
+import { SnacksSelectionView } from "./features/billboard/views/SnacksSelectionView";
 
 export const appRouter = createBrowserRouter([
   { path: "/", element: <Formulario /> },
@@ -22,6 +23,10 @@ export const appRouter = createBrowserRouter([
   {
     path: "/seats",
     element: <SeatSelectionView />,
+  },
+  {
+    path: "/checkout/snacks",
+    element: <SnacksSelectionView />,
   },
   {
     path: "/checkout/payment",

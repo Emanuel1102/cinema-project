@@ -117,7 +117,7 @@ export const SeatSelectionView: React.FC = () => {
       })
     );
 
-    navigate('/checkout/payment');
+    navigate('/checkout/snacks');
   };
 
   const extendedRoomData = roomData as unknown as ExtendedSeatMapResponse | null;
