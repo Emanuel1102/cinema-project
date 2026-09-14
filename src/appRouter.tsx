@@ -7,12 +7,20 @@ import { MoviesOnBillboard } from "./features/billboard/views/MoviesOnBillboardV
 import MovieDetails from "./features/billboard/views/MovieDetailsView";
 import { Formulario } from "./features/billboard/views/LocationView";
 import { UpcomingPage } from "./features/billboard/views/UpcomingView";
-
+import { SeatSelectionView } from "./features/billboard/views/SeatSelectionView";
 
 export const appRouter = createBrowserRouter([
   { path: "/", element: <Formulario /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
+  {
+    path: "/seats/:functionId",
+    element: <SeatSelectionView />,
+  },
+  {
+    path: "/seats",
+    element: <SeatSelectionView />,
+  },
   {
     path: "/movies",
     element: <HomeMovies />,

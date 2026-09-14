@@ -8,10 +8,9 @@ import {
   fetchMovie,
   fetchRecommendations,
   onlyUpcoming,
-  savePendingScreening,
   type Screening,
 } from "@/lib/movies-api";
-import { useAuth, useLocation, useReservations } from "@/lib/store";
+import { useAuth, useLocation } from "@/lib/store";
 import { MovieHero } from "@/features/billboard/components/MovieItems/MovieHero";
 import { TrailerModal } from "@/features/billboard/components/MovieItems/TrailerModal";
 import { MovieInfo } from "@/features/billboard/components/MovieItems/MovieInfo";
@@ -19,17 +18,12 @@ import { CastList } from "@/features/billboard/components/MovieItems/CastList";
 import { ShowtimeFilters } from "@/features/billboard/components/MovieItems/ShowtimeFilters";
 import { ShowtimeList } from "@/features/billboard/components/MovieItems/ShowtimeList";
 import { Recommendations } from "@/features/billboard/components/MovieItems/Recommendations";
-import { SeatItem } from "@/features/billboard/components/SeatMap/SeatItem";
-import { SeatLegend } from "@/features/billboard/components/SeatMap/SeatLegend";
-import { useSeatSelection } from "@/features/billboard/utils/useSeatSelection";
 import { BackToHomeButton } from "@/shared/components";
 
 export default function MovieDetails() {
-  // Obtenemos el movieId de los parámetros de la URL sin requerir la definición estricta de la ruta
   const { movieId } = useParams() as { movieId: string };
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { add } = useReservations();
   const { location } = useLocation();
 
   const days = useMemo(() => next7Days(), []);
@@ -41,7 +35,7 @@ export default function MovieDetails() {
   const [selected, setSelected] = useState<Screening | null>(null);
   const [showTrailer, setShowTrailer] = useState(false);
 
-  // Estados manuales para reemplazar React Query
+  // Estados de carga de datos
   const [movie, setMovie] = useState<Movie | null>(null);
   const [isMovieLoading, setIsMovieLoading] = useState(true);
   const [isMovieError, setIsMovieError] = useState(false);
@@ -53,15 +47,14 @@ export default function MovieDetails() {
   const [recommendations, setRecommendations] = useState<Movie[]>([]);
   const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(true);
 
-  // Cargar detalles de la película con promesas simples (.then)
+  // Consultar detalle de película
   useEffect(() => {
     if (!movieId) return;
     fetchMovie(movieId)
       .then((data) => {
         setMovie(data);
         setIsMovieLoading(false);
-        // Autoseleccionar el primer formato disponible
-        if (data && data.formats && data.formats.length > 0) {
+        if (data?.formats?.length) {
           setFormat(data.formats[0]);
         }
       })
@@ -71,10 +64,9 @@ export default function MovieDetails() {
       });
   }, [movieId]);
 
-  // Cargar funciones de la película
+  // Consultar funciones asociadas
   useEffect(() => {
     if (!movieId) return;
-
     fetchFunctions(movieId, cityId || null)
       .then((data) => {
         setFunctions(data);
@@ -86,7 +78,7 @@ export default function MovieDetails() {
       });
   }, [movieId, cityId]);
 
-  // Cargar recomendaciones
+  // Consultar recomendaciones
   useEffect(() => {
     if (!movieId) return;
     fetchRecommendations(movieId)
@@ -112,43 +104,22 @@ export default function MovieDetails() {
   const selectedScreening = selected && visible.some((screening) => screening.id === selected.id)
     ? selected
     : null;
-  const seatSelection = useSeatSelection(selectedScreening?.id ?? "");
 
-  async function startCheckout() {
+  // Navegación hacia la pantalla de selección de sillas (HU-10 / HU-13)
+  const handleProceedToSeats = () => {
     if (!selectedScreening) {
       toast.error("Selecciona un horario disponible");
       return;
     }
-    if (!user) {
-      toast.error("Inicia sesión para reservar una función");
-      navigate("/login");
-      return;
-    }
-    if (!movie) return;
-    if (seatSelection.selectedSeatIds.length === 0) {
-      toast.error("Selecciona al menos una silla");
-      return;
-    }
+// Desactivamos temporalmente el guard de sesión para probar el flujo de sillas
+  // if (!user) {
+  //   toast.error("Inicia sesión para reservar una función");
+  //   navigate("/login");
+  //   return;
+  // }
 
-    const locked = await seatSelection.handleLockSeats();
-    if (!locked) {
-      toast.error(seatSelection.error ?? "No pudimos reservar las sillas");
-      return;
-    }
-
-    savePendingScreening(selectedScreening);
-    add({
-      movieId: movie.id,
-      movieTitle: movie.title,
-      date: selectedScreening.date,
-      time: selectedScreening.time,
-      format: selectedScreening.format,
-      complex: selectedScreening.complex,
-      seats: seatSelection.selectedSeatIds.length,
-      total: seatSelection.totalPrice,
-    });
-    toast.success("Reserva simulada guardada correctamente.");
-  }
+    navigate(`/seats/${selectedScreening.id}`);
+  };
 
   if (isMovieLoading) {
     return (
@@ -176,6 +147,7 @@ export default function MovieDetails() {
       <div className="mx-auto max-w-7xl px-4 pt-5">
         <BackToHomeButton />
       </div>
+
       <MovieHero movie={movie} onTrailer={() => setShowTrailer(true)} />
 
       {showTrailer && (
@@ -235,63 +207,6 @@ export default function MovieDetails() {
               />
             )}
 
-            {selectedScreening && (
-              <section className="mt-6 border-t border-border pt-5" aria-labelledby="seat-selection-title">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <h2 id="seat-selection-title" className="text-lg font-bold">Selecciona tus sillas</h2>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {seatSelection.isLoading ? "Cargando mapa..." : `${seatSelection.selectedSeatIds.length} seleccionada(s)`}
-                    </p>
-                  </div>
-                  {seatSelection.totalPrice > 0 && (
-                    <span className="chip-accent">{formatCOP(seatSelection.totalPrice)}</span>
-                  )}
-                </div>
-
-                {seatSelection.error ? (
-                  <p role="alert" className="mt-4 rounded-xl bg-muted/60 p-3 text-sm text-muted-foreground">
-                    {seatSelection.error}
-                  </p>
-                ) : seatSelection.isLoading ? (
-                  <div className="mt-4 h-48 animate-pulse rounded-xl bg-secondary" aria-busy="true" />
-                ) : seatSelection.seats.length === 0 ? (
-                  <p className="mt-4 rounded-xl bg-secondary/60 p-3 text-sm text-muted-foreground">
-                    No hay mapa de sillas disponible para esta función.
-                  </p>
-                ) : (
-                  <>
-                    <div className="mt-5 overflow-x-auto rounded-xl border border-border bg-background/40 p-4">
-                      <div className="mx-auto mb-5 max-w-md rounded-full border border-accent/50 px-3 py-2 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                        Pantalla
-                      </div>
-                      <div className="mx-auto w-max space-y-2">
-                        {[...new Set(seatSelection.seats.map((seat) => seat.row))].map((row) => (
-                          <div key={row} className="flex items-center gap-2">
-                            <span className="w-5 text-center text-xs font-bold text-muted-foreground">{row}</span>
-                            <div className="flex gap-2">
-                              {seatSelection.seats
-                                .filter((seat) => seat.row === row)
-                                .sort((a, b) => a.number - b.number)
-                                .map((seat) => (
-                                  <SeatItem
-                                    key={seat.id}
-                                    seat={seat}
-                                    isSelected={seatSelection.selectedSeatIds.includes(seat.id)}
-                                    onSelect={seatSelection.toggleSeatSelection}
-                                  />
-                                ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <SeatLegend className="mt-4" />
-                  </>
-                )}
-              </section>
-            )}
-
             <div className="mt-5 border-t border-border pt-4">
               {selectedScreening && (
                 <p className="mb-2 text-xs text-muted-foreground">
@@ -300,11 +215,12 @@ export default function MovieDetails() {
                 </p>
               )}
               <button
-                onClick={startCheckout}
+                type="button"
+                onClick={handleProceedToSeats}
                 disabled={!selectedScreening}
-                className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
               >
-                <Ticket className="size-4" /> Iniciar compra
+                <Ticket className="size-4" /> Seleccionar sillas
               </button>
             </div>
           </section>

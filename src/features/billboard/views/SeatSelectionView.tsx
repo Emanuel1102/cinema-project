@@ -2,15 +2,15 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import type { Seat, SeatMapResponse } from '../interfaces/seat.interface';
 import { seatService } from '../services/seatService';
-import SeatItem from '../components/SeatMap/SeatItem';
-import SeatLegend from '../components/SeatMap/SeatLegend';
+import { RoomLayout } from '../components/SeatMap/RoomLayout';
+import { BackToHomeButton } from '@/shared/components';
 
 type ExtendedSeatMapResponse = SeatMapResponse & {
   seats?: Seat[];
   movieTitle?: string;
   roomName?: string;
   showtime?: string;
-}
+};
 
 export const SeatSelectionView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,11 +19,11 @@ export const SeatSelectionView: React.FC = () => {
   const [roomData, setRoomData] = useState<SeatMapResponse | null>(null);
   const [seats, setSeats] = useState<Seat[]>([]);
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
-  const [reservationId, setReservationId] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(600);
   const [isExpired, setIsExpired] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Cargar datos de la función desde el mock
   useEffect(() => {
     seatService
       .getSeatsByFunction(id || 'f-101')
@@ -39,10 +39,7 @@ export const SeatSelectionView: React.FC = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const rows = useMemo(() => {
-    return Array.from(new Set(seats.map((s) => s.row))).sort();
-  }, [seats]);
-
+  // Temporizador de sesión de 10 minutos
   useEffect(() => {
     if (selectedSeatIds.length === 0 || isExpired) return;
 
@@ -51,9 +48,6 @@ export const SeatSelectionView: React.FC = () => {
         if (prev <= 1) {
           clearInterval(timer);
           setIsExpired(true);
-          if (reservationId) {
-            seatService.releaseSeats(reservationId).catch(console.error);
-          }
           return 0;
         }
         return prev - 1;
@@ -61,7 +55,7 @@ export const SeatSelectionView: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [selectedSeatIds.length, isExpired, reservationId]);
+  }, [selectedSeatIds.length, isExpired]);
 
   const formattedTime = useMemo(() => {
     const mins = Math.floor(timeLeft / 60);
@@ -69,6 +63,7 @@ export const SeatSelectionView: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, [timeLeft]);
 
+  // Selección y deselección local protegida
   const handleSelectSeat = (seatId: string) => {
     if (isExpired) return;
 
@@ -83,31 +78,15 @@ export const SeatSelectionView: React.FC = () => {
     }
 
     const isAlreadySelected = selectedSeatIds.includes(seatId);
-    let updatedSelection: string[];
 
     if (isAlreadySelected) {
-      updatedSelection = selectedSeatIds.filter((s) => s !== seatId);
+      setSelectedSeatIds((prev) => prev.filter((s) => s !== seatId));
     } else {
       if (selectedSeatIds.length >= 8) {
         alert('Solo puedes seleccionar un máximo de 8 sillas por compra.');
         return;
       }
-      updatedSelection = [...selectedSeatIds, seatId];
-    }
-
-    setSelectedSeatIds(updatedSelection);
-
-    if (updatedSelection.length > 0 && !reservationId) {
-      seatService
-        .lockSeats({ functionId: id || 'f-101', seatIds: updatedSelection })
-        .then((res) => {
-          setReservationId(res.reservationId);
-        })
-        .catch((err: unknown) => console.error('Error al bloquear sillas:', err));
-    } else if (updatedSelection.length === 0 && reservationId) {
-      seatService.releaseSeats(reservationId).catch(console.error);
-      setReservationId(null);
-      setTimeLeft(600);
+      setSelectedSeatIds((prev) => [...prev, seatId]);
     }
   };
 
@@ -119,14 +98,20 @@ export const SeatSelectionView: React.FC = () => {
     return selectedSeats.reduce((acc, s) => acc + (s.price || 15000), 0);
   }, [selectedSeats]);
 
-  const handleContinue = () => {
+  // Continuar a la pasarela de pago (HU-11)
+  const handleContinue = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (selectedSeatIds.length === 0 || isExpired) return;
+
+    const generatedReservationId = `res-${Date.now()}`;
 
     sessionStorage.setItem(
       'checkout_selection',
       JSON.stringify({
-        functionId: id,
-        reservationId,
+        functionId: id || 'f-101',
+        reservationId: generatedReservationId,
         seats: selectedSeats,
         totalPrice,
       })
@@ -169,6 +154,11 @@ export const SeatSelectionView: React.FC = () => {
         </div>
       )}
 
+      {/* Navegación superior */}
+      <div className="max-w-5xl mx-auto mb-6">
+        <BackToHomeButton />
+      </div>
+
       <main className="max-w-5xl mx-auto space-y-8">
         <header className="bg-[#111424]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
           <div>
@@ -188,41 +178,16 @@ export const SeatSelectionView: React.FC = () => {
           )}
         </header>
 
-        <div className="flex flex-col items-center pt-2">
-          <div className="w-4/5 max-w-xl h-2 bg-gradient-to-r from-transparent via-purple-500 to-transparent rounded-full shadow-[0_0_25px_rgba(168,85,247,0.85)]" />
-          <p className="text-[10px] uppercase tracking-widest text-slate-500 mt-2 font-bold">
-            Pantalla
-          </p>
-        </div>
-
-        <section className="bg-[#111424]/60 border border-white/10 rounded-2xl p-6 overflow-x-auto shadow-2xl flex flex-col items-center">
-          <div className="min-w-[440px] space-y-3">
-            {rows.map((row) => (
-              <div key={row} className="flex items-center justify-center gap-3">
-                <span className="w-5 text-xs font-bold text-slate-500 text-center">{row}</span>
-                <div className="flex gap-2">
-                  {seats
-                    .filter((s) => s.row === row)
-                    .map((seat) => (
-                      <SeatItem
-                        key={seat.id}
-                        seat={seat}
-                        isSelected={selectedSeatIds.includes(seat.id)}
-                        onSelect={handleSelectSeat}
-                      />
-                    ))}
-                </div>
-                <span className="w-5 text-xs font-bold text-slate-500 text-center">{row}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="flex justify-center">
-          <SeatLegend />
-        </section>
+        {/* Sala matricial */}
+        <RoomLayout
+          seats={seats}
+          selectedSeatIds={selectedSeatIds}
+          onSeatSelect={handleSelectSeat}
+          showLegend={true}
+        />
       </main>
 
+      {/* Barra de resumen inferior */}
       <aside className="fixed bottom-0 left-0 w-full bg-[#0b0f19]/95 backdrop-blur-xl border-t border-white/10 p-4 z-40">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
@@ -252,3 +217,5 @@ export const SeatSelectionView: React.FC = () => {
     </div>
   );
 };
+
+export default SeatSelectionView;

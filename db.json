@@ -1,20 +1,55 @@
 {
   "countries": [
-    { "id": "co", "name": "Colombia" }
+    {
+      "id": "co",
+      "name": "Colombia"
+    }
   ],
   "departments": [
-    { "id": "atl", "countryId": "co", "name": "Atlántico" },
-    { "id": "ant", "countryId": "co", "name": "Antioquia" },
-    { "id": "bog", "countryId": "co", "name": "Bogotá D.C." }
+    {
+      "id": "atl",
+      "countryId": "co",
+      "name": "Atlántico"
+    },
+    {
+      "id": "ant",
+      "countryId": "co",
+      "name": "Antioquia"
+    },
+    {
+      "id": "bog",
+      "countryId": "co",
+      "name": "Bogotá D.C."
+    }
   ],
   "cities": [
-    { "id": "barranquilla", "departmentId": "atl", "name": "Barranquilla" },
-    { "id": "medellin", "departmentId": "ant", "name": "Medellín" },
-    { "id": "bogota", "departmentId": "bog", "name": "Bogotá" }
+    {
+      "id": "barranquilla",
+      "departmentId": "atl",
+      "name": "Barranquilla"
+    },
+    {
+      "id": "medellin",
+      "departmentId": "ant",
+      "name": "Medellín"
+    },
+    {
+      "id": "bogota",
+      "departmentId": "bog",
+      "name": "Bogotá"
+    }
   ],
   "cinemas": [
-    { "id": "cine-1", "cityId": "barranquilla", "name": "CineColombia Buenavista" },
-    { "id": "cine-2", "cityId": "barranquilla", "name": "Cinemark Mallplaza" }
+    {
+      "id": "cine-1",
+      "cityId": "barranquilla",
+      "name": "CineColombia Buenavista"
+    },
+    {
+      "id": "cine-2",
+      "cityId": "barranquilla",
+      "name": "Cinemark Mallplaza"
+    }
   ],
   "movies": [
     {
@@ -65,26 +100,131 @@
       "rows": 3,
       "columns": 4,
       "seats": [
-        { "id": "A-1", "row": "A", "number": 1, "type": "standard", "status": "available", "price": 15000 },
-        { "id": "A-2", "row": "A", "number": 2, "type": "standard", "status": "available", "price": 15000 },
-        { "id": "A-3", "row": "A", "number": 3, "type": "standard", "status": "sold", "price": 15000 },
-        { "id": "A-4", "row": "A", "number": 4, "type": "standard", "status": "sold", "price": 15000 },
-        { "id": "B-1", "row": "B", "number": 1, "type": "preferential", "status": "available", "price": 18000 },
-        { "id": "B-2", "row": "B", "number": 2, "type": "preferential", "status": "available", "price": 18000 },
-        { "id": "B-3", "row": "B", "number": 3, "type": "preferential", "status": "available", "price": 18000 },
-        { "id": "B-4", "row": "B", "number": 4, "type": "preferential", "status": "reserved", "price": 18000 },
-        { "id": "C-1", "row": "C", "number": 1, "type": "vip", "status": "available", "price": 22000 },
-        { "id": "C-2", "row": "C", "number": 2, "type": "vip", "status": "available", "price": 22000 },
-        { "id": "C-3", "row": "C", "number": 3, "type": "vip", "status": "available", "price": 22000 },
-        { "id": "C-4", "row": "C", "number": 4, "type": "vip", "status": "available", "price": 22000 }
+        {
+          "id": "A-1",
+          "row": "A",
+          "number": 1,
+          "type": "standard",
+          "status": "available",
+          "price": 15000
+        },
+        {
+          "id": "A-2",
+          "row": "A",
+          "number": 2,
+          "type": "standard",
+          "status": "available",
+          "price": 15000
+        },
+        {
+          "id": "A-3",
+          "row": "A",
+          "number": 3,
+          "type": "standard",
+          "status": "sold",
+          "price": 15000
+        },
+        {
+          "id": "A-4",
+          "row": "A",
+          "number": 4,
+          "type": "standard",
+          "status": "sold",
+          "price": 15000
+        },
+        {
+          "id": "B-1",
+          "row": "B",
+          "number": 1,
+          "type": "preferential",
+          "status": "available",
+          "price": 18000
+        },
+        {
+          "id": "B-2",
+          "row": "B",
+          "number": 2,
+          "type": "preferential",
+          "status": "available",
+          "price": 18000
+        },
+        {
+          "id": "B-3",
+          "row": "B",
+          "number": 3,
+          "type": "preferential",
+          "status": "available",
+          "price": 18000
+        },
+        {
+          "id": "B-4",
+          "row": "B",
+          "number": 4,
+          "type": "preferential",
+          "status": "reserved",
+          "price": 18000
+        },
+        {
+          "id": "C-1",
+          "row": "C",
+          "number": 1,
+          "type": "vip",
+          "status": "available",
+          "price": 22000
+        },
+        {
+          "id": "C-2",
+          "row": "C",
+          "number": 2,
+          "type": "vip",
+          "status": "available",
+          "price": 22000
+        },
+        {
+          "id": "C-3",
+          "row": "C",
+          "number": 3,
+          "type": "vip",
+          "status": "available",
+          "price": 22000
+        },
+        {
+          "id": "C-4",
+          "row": "C",
+          "number": 4,
+          "type": "vip",
+          "status": "available",
+          "price": 22000
+        }
       ]
     }
   ],
+  "users": [
+    {
+      "id": "u-1",
+      "name": "Juan Bolívar",
+      "email": "juan@test.com",
+      "password": "Password123*",
+      "role": "customer"
+    }
+  ],
   "snack_categories": [
-    { "id": "combos", "name": "Combos" },
-    { "id": "crispetas", "name": "Crispetas" },
-    { "id": "bebidas", "name": "Bebidas" },
-    { "id": "dulces", "name": "Chocolatería y Dulces" }
+    {
+      "id": "combos",
+      "name": "Combos"
+    },
+    {
+      "id": "crispetas",
+      "name": "Crispetas"
+    },
+    {
+      "id": "bebidas",
+      "name": "Bebidas"
+    },
+    {
+      "id": "dulces",
+      "name": "Chocolatería y Dulces"
+    }
   ],
   "snacks": [
     {
@@ -112,5 +252,6 @@
       "imageUrl": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400"
     }
   ],
-  "reservations": []
+  "reservations": [],
+  "$schema": "./node_modules/json-server/schema.json"
 }
