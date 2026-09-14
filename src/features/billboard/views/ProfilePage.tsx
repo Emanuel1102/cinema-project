@@ -1,27 +1,15 @@
 import React, { useState } from "react";
-import { Ticket, Calendar, Armchair, QrCode, Film, Clock, ArrowLeft } from "lucide-react";
+import { Ticket, Film, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
-import type { Seat } from "../interfaces/seat.interface";
-
-interface StoredBooking {
-  orderId: string;
-  functionId: string;
-  seats: (Seat | string)[];
-  totalPaid: number;
-  paymentMethod: string;
-  customer: {
-    fullName: string;
-    email: string;
-  };
-  date: string;
-  status: string;
-}
+import type { StoredBooking } from "../interfaces/cancellation.interface";
+import { cancellationService } from "../services/cancellationService";
+import { BookingTicketCard, CancelConfirmModal } from "../components/Cancellation";
 
 export const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
 
   // Inicialización diferida: lee localStorage de inmediato sin renders en cascada
-  const [bookings] = useState<StoredBooking[]>(() => {
+  const [bookings, setBookings] = useState<StoredBooking[]>(() => {
     try {
       const raw = localStorage.getItem("user_booking_history");
       return raw ? JSON.parse(raw) : [];
@@ -30,6 +18,42 @@ export const ProfilePage: React.FC = () => {
       return [];
     }
   });
+
+  const [selectedBookingForCancel, setSelectedBookingForCancel] = useState<StoredBooking | null>(null);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+
+  const handleOpenCancelModal = (booking: StoredBooking) => {
+    setSelectedBookingForCancel(booking);
+    setIsCancelModalOpen(true);
+  };
+
+  const handleCloseCancelModal = () => {
+    if (cancelling) return;
+    setIsCancelModalOpen(false);
+    setSelectedBookingForCancel(null);
+  };
+
+  const handleConfirmCancellation = async (orderId: string) => {
+    setCancelling(true);
+    try {
+      await cancellationService.cancelBooking(orderId);
+
+      // Mutación reactiva inmediata en el estado local sin recargar pantalla
+      setBookings((prev) =>
+        prev.map((b) => (b.orderId === orderId ? { ...b, status: "CANCELLED" } : b))
+      );
+
+      setIsCancelModalOpen(false);
+      setSelectedBookingForCancel(null);
+      alert("La reserva fue cancelada exitosamente y las sillas han sido liberadas.");
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un problema al anular la reserva. Por favor intenta de nuevo.");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#070913] text-[#e8e8ed] px-4 sm:px-8 py-8 selection:bg-purple-600 selection:text-white pb-24">
@@ -43,6 +67,7 @@ export const ProfilePage: React.FC = () => {
           Volver a la cartelera
         </button>
 
+        {/* Encabezado del Perfil */}
         <div className="bg-[#111424] border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 shadow-xl">
           <div className="size-20 rounded-2xl bg-purple-600 flex items-center justify-center text-2xl font-black text-white shadow-lg shadow-purple-600/40">
             JB
@@ -50,11 +75,12 @@ export const ProfilePage: React.FC = () => {
           <div className="text-center sm:text-left space-y-1">
             <h1 className="text-xl sm:text-2xl font-bold text-white">Mi Cuenta & Boletas</h1>
             <p className="text-xs text-slate-400">
-              Gestiona tus compras recientes y presenta tus códigos de acceso en sala.
+              Gestiona tus compras recientes, presenta tus códigos de acceso o cancela reservas activas.
             </p>
           </div>
         </div>
 
+        {/* Listado de Boletas */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
@@ -80,74 +106,28 @@ export const ProfilePage: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {bookings.map((item) => {
-                const formattedDate = new Date(item.date).toLocaleDateString("es-CO", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
-
-                const seatLabels = item.seats
-                  .map((s) => (typeof s === "string" ? s : s.id))
-                  .join(", ");
-
-                return (
-                  <div
-                    key={item.orderId}
-                    className="bg-[#111424] border border-white/10 rounded-2xl p-5 hover:border-purple-500/40 transition flex flex-col md:flex-row items-center justify-between gap-6 shadow-md"
-                  >
-                    <div className="flex-1 space-y-3 w-full">
-                      <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                        <span className="font-mono text-xs font-black text-purple-400">
-                          {item.orderId}
-                        </span>
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-500/10 text-green-400 border border-green-500/20">
-                          PAGADO / CONFIRMADO
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                        <div className="space-y-0.5">
-                          <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                            <Clock className="size-3 text-purple-400" />
-                            Función
-                          </span>
-                          <p className="font-semibold text-white">{item.functionId}</p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                            <Armchair className="size-3 text-purple-400" />
-                            Sillas
-                          </span>
-                          <p className="font-semibold text-purple-300">{seatLabels}</p>
-                        </div>
-
-                        <div className="space-y-0.5">
-                          <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                            <Calendar className="size-3 text-purple-400" />
-                            Fecha
-                          </span>
-                          <p className="font-semibold text-white">{formattedDate}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex sm:flex-col items-center justify-center p-3 bg-[#070913] border border-white/10 rounded-xl gap-2 w-full md:w-auto shrink-0">
-                      <QrCode className="size-8 text-white" />
-                      <span className="text-[10px] font-mono text-slate-400 text-center">
-                        Acceso Sala
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+              {bookings.map((booking) => (
+                <BookingTicketCard
+                  key={booking.orderId}
+                  booking={booking}
+                  onOpenCancelModal={handleOpenCancelModal}
+                />
+              ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Modal de Cancelación Orquestado */}
+      {selectedBookingForCancel && (
+        <CancelConfirmModal
+          booking={selectedBookingForCancel}
+          isOpen={isCancelModalOpen}
+          loading={cancelling}
+          onClose={handleCloseCancelModal}
+          onConfirm={handleConfirmCancellation}
+        />
+      )}
     </div>
   );
 };
