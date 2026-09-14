@@ -131,7 +131,7 @@ export const CheckoutPaymentView: React.FC = () => {
             : undefined,
       };
 
-      const response = await paymentService.processPayment(payload);
+      const response = await paymentService.processPayment(payload, sessionData.seats);
 
       // Guardamos la confirmación para el comprobante / ticket digital (HU-13)
       sessionStorage.setItem(
