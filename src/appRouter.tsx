@@ -13,7 +13,7 @@ import { OrderSuccessView } from "./features/billboard/views/OrderSuccessView";
 import { SnacksSelectionView } from "./features/billboard/views/SnacksSelectionView";
 
 export const appRouter = createBrowserRouter([
-  { path: "/", element: <Formulario /> },
+  { path: "/booking", element: <Formulario /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
   {
@@ -31,7 +31,7 @@ export const appRouter = createBrowserRouter([
   {
     path: "/checkout/payment",
     element: <CheckoutPaymentView />,
-  },
+  },  
   {
     path: "/checkout/success",
     element: <OrderSuccessView />,
@@ -44,6 +44,7 @@ export const appRouter = createBrowserRouter([
       { path: "upcoming", element: <UpcomingPage /> },
       { path: "details/:movieId", element: <MovieDetails /> },
       { path: "profile", element: <ProfilePage /> },
+
     ],
   },
 ]);
