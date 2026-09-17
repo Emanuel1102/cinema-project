@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
-import { useLocation as useSavedLocation, useReservations } from "@/lib/store";
+import { useLocation as useSavedLocation, useReservations, useAuth } from "@/lib/store";
 import { LocationForm } from "./CountryForm";
 import type { SelectedLocation } from "../interfaces/location";
 
 export const Header = () => {
+  const navigate = useNavigate();
   const routeLocation = useLocation();
   const { reservations } = useReservations();
   const { location: savedLocation, save } = useSavedLocation();
+  const { user, logout } = useAuth();
 
   const routeCityName = (routeLocation.state as { city?: string } | null)?.city;
   const cityLabel = savedLocation?.cityName || routeCityName || "Bogotá";
@@ -36,10 +38,16 @@ export const Header = () => {
     );
   }
 
+  function handleLogout() {
+    logout();
+    toast.success("Sesión cerrada correctamente.");
+    navigate("/movies");
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0F172A]/85 backdrop-blur-md shadow-[0_10px_30px_rgba(15,23,42,0.5)]">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-        <div className="flex items-center gap-2 shrink-0">
+        <Link to="/movies" className="flex items-center gap-2 shrink-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#7C3AED] text-white shadow-lg shadow-[#7C3AED]/30">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
               <rect x="2" y="2" width="8" height="8" rx="1.5"></rect>
@@ -49,7 +57,7 @@ export const Header = () => {
             </svg>
           </div>
           <span className="hidden text-sm font-black uppercase tracking-[0.18em] text-white sm:block">MULTICINE</span>
-        </div>
+        </Link>
 
         <nav className="flex items-center gap-1 text-sm font-medium">
           <Link to="/movies" className="rounded-lg bg-[#7C3AED]/15 px-3 py-1.5 text-[#818CF8] transition-colors hover:bg-[#7C3AED]/20">
@@ -61,6 +69,7 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Selector de Ciudad */}
           <button onClick={() => setIsLocationFormOpen(true)} className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition duration-200 hover:bg-white/10">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -69,6 +78,7 @@ export const Header = () => {
             {cityLabel}
           </button>
 
+          {/* Botón Carrito / Reservas */}
           <button onClick={handleReservations} aria-label="Ver reservas" className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-200 transition duration-200 hover:bg-white/5 hover:scale-105">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="9" cy="21" r="1"></circle>
@@ -77,11 +87,37 @@ export const Header = () => {
             </svg>
           </button>
 
-          <Link to="/login" className="rounded-xl bg-[#7C3AED] px-4 py-1.5 text-sm font-semibold text-white transition-all hover:opacity-90">
-            Ingresar
-          </Link>
+          {/* Render condicional de Autenticación (HU-7) */}
+          {user ? (
+            <div className="flex items-center gap-2">
+              <Link
+                to="/movies/profile"
+                className="flex items-center gap-2 rounded-xl bg-violet-500/10 border border-[#7C3AED]/30 px-3 py-1.5 text-sm font-medium text-slate-200 transition-all hover:bg-violet-500/20"
+                title="Ir a mi perfil"
+              >
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#7C3AED] text-xs font-bold text-white uppercase">
+                  {user.name ? user.name[0] : user.email[0]}
+                </div>
+                <span className="hidden md:inline max-w-[120px] truncate text-xs">
+                  {user.name || user.email.split("@")[0]}
+                </span>
+              </Link>
+              <button
+                onClick={handleLogout}
+                title="Cerrar sesión"
+                className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-2.5 py-1.5 text-xs font-medium text-rose-300 transition-all hover:bg-rose-500/20"
+              >
+                Salir
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="rounded-xl bg-[#7C3AED] px-4 py-1.5 text-sm font-semibold text-white transition-all hover:opacity-90">
+              Ingresar
+            </Link>
+          )}
         </div>
       </div>
+
       {isLocationFormOpen && (
         <LocationForm
           onComplete={handleLocationComplete}
