@@ -172,7 +172,7 @@ export function RefundSummary({
       </dl>
 
       <p className="text-center text-[11px] text-slate-500">
-      {/* TODO: Reemplazar por datos reales de pasarela */}
+      {/* TODO: Replace with real gateway data */}
       </p>
       <p className="text-center text-[11px] text-slate-500">
         El reembolso se procesará automáticamente al confirmar la cancelación.
