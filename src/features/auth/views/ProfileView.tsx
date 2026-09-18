@@ -112,7 +112,7 @@ export const ProfilePage: React.FC = () => {
     <div className="min-h-screen bg-[#070913] text-white font-sans pb-24 md:pb-12">
       
       {/* NAVBAR SUPERIOR RESPONSIVA */}
-      <nav className="sticky top-0 z-50 bg-[#0B0F19]/80 backdrop-blur-md border-b border-white/10 px-4 md:px-8 py-4">
+      {/* <nav className="sticky top-0 z-50 bg-[#0B0F19]/80 backdrop-blur-md border-b border-white/10 px-4 md:px-8 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
             <span className="text-xl font-extrabold tracking-wider text-purple-400">CINEPLEX</span>
@@ -143,7 +143,7 @@ export const ProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
-      </nav>
+      </nav> */}
 
       {/* CONTENIDO PRINCIPAL LAYOUT */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 pt-6 md:pt-8 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
