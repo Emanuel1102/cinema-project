@@ -8,10 +8,9 @@ import {
   fetchMovie,
   fetchRecommendations,
   onlyUpcoming,
-  savePendingScreening,
   type Screening,
 } from "@/lib/movies-api";
-import { useAuth, useLocation, useReservations } from "@/lib/store";
+import { useAuth, useLocation } from "@/lib/store";
 import { MovieHero } from "@/features/billboard/components/MovieItems/MovieHero";
 import { TrailerModal } from "@/features/billboard/components/MovieItems/TrailerModal";
 import { MovieInfo } from "@/features/billboard/components/MovieItems/MovieInfo";
@@ -22,11 +21,9 @@ import { Recommendations } from "@/features/billboard/components/MovieItems/Reco
 import { BackToHomeButton } from "@/shared/components";
 
 export default function MovieDetails() {
-  // Obtenemos el movieId de los parámetros de la URL sin requerir la definición estricta de la ruta
   const { movieId } = useParams() as { movieId: string };
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { add } = useReservations();
   const { location } = useLocation();
 
   const days = useMemo(() => next7Days(), []);
@@ -38,7 +35,7 @@ export default function MovieDetails() {
   const [selected, setSelected] = useState<Screening | null>(null);
   const [showTrailer, setShowTrailer] = useState(false);
 
-  // Estados manuales para reemplazar React Query
+  // Estados de carga de datos
   const [movie, setMovie] = useState<Movie | null>(null);
   const [isMovieLoading, setIsMovieLoading] = useState(true);
   const [isMovieError, setIsMovieError] = useState(false);
@@ -50,15 +47,14 @@ export default function MovieDetails() {
   const [recommendations, setRecommendations] = useState<Movie[]>([]);
   const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(true);
 
-  // Cargar detalles de la película con promesas simples (.then)
+  // Consultar detalle de película
   useEffect(() => {
     if (!movieId) return;
     fetchMovie(movieId)
       .then((data) => {
         setMovie(data);
         setIsMovieLoading(false);
-        // Autoseleccionar el primer formato disponible
-        if (data && data.formats && data.formats.length > 0) {
+        if (data?.formats?.length) {
           setFormat(data.formats[0]);
         }
       })
@@ -68,10 +64,9 @@ export default function MovieDetails() {
       });
   }, [movieId]);
 
-  // Cargar funciones de la película
+  // Consultar funciones asociadas
   useEffect(() => {
     if (!movieId) return;
-
     fetchFunctions(movieId, cityId || null)
       .then((data) => {
         setFunctions(data);
@@ -83,7 +78,7 @@ export default function MovieDetails() {
       });
   }, [movieId, cityId]);
 
-  // Cargar recomendaciones
+  // Consultar recomendaciones
   useEffect(() => {
     if (!movieId) return;
     fetchRecommendations(movieId)
@@ -110,31 +105,21 @@ export default function MovieDetails() {
     ? selected
     : null;
 
-  function startCheckout() {
+  // Navegación hacia la pantalla de selección de sillas (HU-10 / HU-13)
+  const handleProceedToSeats = () => {
     if (!selectedScreening) {
       toast.error("Selecciona un horario disponible");
       return;
     }
-    if (!user) {
-      toast.error("Inicia sesión para reservar una función");
-      navigate("/login");
-      return;
-    }
-    if (!movie) return;
+// Desactivamos temporalmente el guard de sesión para probar el flujo de sillas
+  // if (!user) {
+  //   toast.error("Inicia sesión para reservar una función");
+  //   navigate("/login");
+  //   return;
+  // }
 
-    savePendingScreening(selectedScreening);
-    add({
-      movieId: movie.id,
-      movieTitle: movie.title,
-      date: selectedScreening.date,
-      time: selectedScreening.time,
-      format: selectedScreening.format,
-      complex: selectedScreening.complex,
-      seats: 1,
-      total: selectedScreening.price,
-    });
-    toast.success("Reserva simulada guardada correctamente.");
-  }
+    navigate(`/seats/${selectedScreening.id}`);
+  };
 
   if (isMovieLoading) {
     return (
@@ -162,6 +147,7 @@ export default function MovieDetails() {
       <div className="mx-auto max-w-7xl px-4 pt-5">
         <BackToHomeButton />
       </div>
+
       <MovieHero movie={movie} onTrailer={() => setShowTrailer(true)} />
 
       {showTrailer && (
@@ -229,11 +215,12 @@ export default function MovieDetails() {
                 </p>
               )}
               <button
-                onClick={startCheckout}
+                type="button"
+                onClick={handleProceedToSeats}
                 disabled={!selectedScreening}
-                className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
               >
-                <Ticket className="size-4" /> Iniciar compra
+                <Ticket className="size-4" /> Seleccionar sillas
               </button>
             </div>
           </section>

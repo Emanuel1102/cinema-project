@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { Seat, SeatStatus } from '../interfaces/seat.interface';
+import { useState, useEffect, useMemo } from 'react';
+import type { Seat } from '../interfaces/seat.interface';
 import { seatService } from '../services/seatService';
 
 const TEN_MINUTES_IN_SECONDS = 600; // 10 minutos
@@ -15,12 +15,19 @@ export const useSeatSelection = (functionId: string) => {
 
   // Cargar mapa de sillas
   useEffect(() => {
+    if (!functionId) return;
+
     const fetchSeats = async () => {
       try {
         setIsLoading(true);
+        setError(null);
+        setSelectedSeatIds([]);
+        setReservationId(null);
+        setIsTimerActive(false);
+        setTimeLeft(TEN_MINUTES_IN_SECONDS);
         const data = await seatService.getSeatsByFunction(functionId);
         setSeats(data.seats);
-      } catch (err) {
+      } catch {
         setError('Error al cargar la distribución de la sala.');
       } finally {
         setIsLoading(false);
@@ -58,8 +65,8 @@ export const useSeatSelection = (functionId: string) => {
   }, [selectedSeatIds, seats]);
 
   // Confirmar y Bloquear Sillas
-  const handleLockSeats = async () => {
-    if (selectedSeatIds.length === 0) return;
+  const handleLockSeats = async (): Promise<boolean> => {
+    if (!functionId || selectedSeatIds.length === 0) return false;
 
     try {
       const response = await seatService.lockSeats({
@@ -68,14 +75,16 @@ export const useSeatSelection = (functionId: string) => {
       });
       setReservationId(response.reservationId);
       setIsTimerActive(true);
-    } catch (err) {
+      return true;
+    } catch {
       setError('Una o más sillas seleccionadas ya no están disponibles.');
+      return false;
     }
   };
 
   // Control de la Cuenta Regresiva
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setInterval>;
 
     if (isTimerActive && timeLeft > 0) {
       timer = setInterval(() => {
@@ -83,12 +92,16 @@ export const useSeatSelection = (functionId: string) => {
       }, 1000);
     } else if (timeLeft === 0 && isTimerActive) {
       // Expiró el tiempo
-      setIsTimerActive(false);
-      if (reservationId) {
-        seatService.releaseSeats(reservationId);
-      }
-      setSelectedSeatIds([]);
-      alert('Tu tiempo de reserva ha expirado. Por favor, selecciona tus sillas nuevamente.');
+      const expirationTask = setTimeout(() => {
+        setIsTimerActive(false);
+        if (reservationId) {
+          seatService.releaseSeats(reservationId);
+        }
+        setSelectedSeatIds([]);
+        alert('Tu tiempo de reserva ha expirado. Por favor, selecciona tus sillas nuevamente.');
+      }, 0);
+
+      return () => clearTimeout(expirationTask);
     }
 
     return () => clearInterval(timer);

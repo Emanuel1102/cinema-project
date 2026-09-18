@@ -7,11 +7,35 @@ import { MoviesOnBillboard } from "./features/billboard/views/MoviesOnBillboardV
 import MovieDetails from "./features/billboard/views/MovieDetailsView";
 import { Formulario } from "./features/billboard/views/LocationView";
 import { UpcomingPage } from "./features/billboard/views/UpcomingView";
+import { SeatSelectionView } from "./features/billboard/views/SeatSelectionView";
+import { CheckoutPaymentView } from "./features/billboard/views/CheckoutPaymentView";
+import { OrderSuccessView } from "./features/billboard/views/OrderSuccessView";
+import { SnacksSelectionView } from "./features/billboard/views/SnacksSelectionView";
 
 export const appRouter = createBrowserRouter([
   { path: "/", element: <Formulario /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
+  {
+    path: "/seats/:functionId",
+    element: <SeatSelectionView />,
+  },
+  {
+    path: "/seats",
+    element: <SeatSelectionView />,
+  },
+  {
+    path: "/checkout/snacks",
+    element: <SnacksSelectionView />,
+  },
+  {
+    path: "/checkout/payment",
+    element: <CheckoutPaymentView />,
+  },
+  {
+    path: "/checkout/success",
+    element: <OrderSuccessView />,
+  },
   {
     path: "/movies",
     element: <HomeMovies />,

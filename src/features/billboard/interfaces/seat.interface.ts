@@ -18,6 +18,7 @@ export interface Seat {
 
 export interface SeatMapResponse {
   functionId: string;
+  movieTitle?: string;
   rows: number;
   columns: number;
   seats: Seat[];

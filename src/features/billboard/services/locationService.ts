@@ -1,46 +1,53 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "";
+import type {
+  Country,
+  Department,
+  City,
+  UserLocationPreference,
+} from '../interfaces/location.interface';
 
-async function safeFetch<T>(url: string): Promise<T> {
-  const res = await fetch(url, { cache: "no-store" });
+const LOCATION_STORAGE_KEY = 'user_location_preference';
+// Apunta a la variable de entorno o por defecto al json-server local en puerto 3000
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
   return (await res.json()) as T;
 }
 
-export async function getCountries(): Promise<string[]> {
-  if (!API_BASE) throw new Error("API base not configured");
-  return safeFetch<string[]>(`${API_BASE.replace(/\/$/,"")}/countries`);
+// 1. GET /countries
+export async function getCountries(): Promise<Country[]> {
+  return fetchJson<Country[]>(`${API_BASE}/countries`);
 }
 
-export async function getDepartments(country: string): Promise<string[]> {
-  if (!API_BASE) throw new Error("API base not configured");
-  return safeFetch<string[]>(`${API_BASE.replace(/\/$/,"")}/countries/${encodeURIComponent(country)}/departments`);
+// 2. GET /departments?countryId={id} (soporta ambos nombres de exportación)
+export async function getDepartments(countryId: string): Promise<Department[]> {
+  return fetchJson<Department[]>(`${API_BASE}/departments?countryId=${encodeURIComponent(countryId)}`);
+}
+export const getDepartmentsByCountry = getDepartments;
+
+// 3. GET /cities?departmentId={id}   
+export async function getCities(departmentId: string): Promise<City[]> {
+  return fetchJson<City[]>(`${API_BASE}/cities?departmentId=${encodeURIComponent(departmentId)}`);
+}
+export const getCitiesByDepartment = getCities;
+
+// 4. Manejo de LocalStorage para persistir la selección
+export function saveLocationPreference(preference: UserLocationPreference): void {
+  localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(preference));
 }
 
-export async function getCities(department: string): Promise<string[]> {
-  if (!API_BASE) throw new Error("API base not configured");
-  return safeFetch<string[]>(`${API_BASE.replace(/\/$/,"")}/departments/${encodeURIComponent(department)}/cities`);
+export function getSavedLocationPreference(): UserLocationPreference | null {
+  const data = localStorage.getItem(LOCATION_STORAGE_KEY);
+  return data ? JSON.parse(data) : null;
 }
-
-// Fallback helpers for when backend isn't available
-export const FALLBACK = {
-  countries: ["colombia", "peru"],
-  departamentsByCountry: {
-    colombia: ["choco", "atlantico", "cordoba"],
-    peru: ["cusco", "lima", "ucayali"],
-  } as Record<string, string[]>,
-  citiesByDepartament: {
-    choco: ["quibdo", "istmina", "condoto"],
-    atlantico: ["barranquilla", "soledad", "sabanalarga"],
-    cordoba: ["monteria", "lorica", "sahagun"],
-    cusco: ["cusco", "pisac", "ollantaytambo"],
-    lima: ["lima", "miraflores", "barranco"],
-    ucayali: ["pucallpa", "atalaya", "purus"],
-  } as Record<string, string[]>,
-};
 
 export default {
   getCountries,
   getDepartments,
+  getDepartmentsByCountry,
   getCities,
-  FALLBACK,
+  getCitiesByDepartment,
+  saveLocationPreference,
+  getSavedLocationPreference,
 };

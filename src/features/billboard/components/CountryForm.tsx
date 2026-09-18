@@ -25,7 +25,7 @@ export function LocationForm({ onComplete, onClose }: LocationFormProps) {
   useEffect(() => {
     let mounted = true;
 
-    fetch(`${API_BASE}/api/cities`)
+    fetch(`${API_BASE}/cities`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Error fetching cities");
         const payload = await res.json();

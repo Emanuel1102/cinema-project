@@ -1,21 +1,39 @@
-import api from './apiClient';
-import type { SeatMapResponse, LockSeatsPayload, LockSeatsResponse } from '../interfaces/seat.interface';
+import axios from 'axios';
+import type { SeatMapResponse } from '../interfaces/seat.interface';
+
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
+
+const client = axios.create({
+  baseURL: API_BASE,
+  headers: { 'Content-Type': 'application/json' },
+});
 
 export const seatService = {
-  // Obtener la distribución y estado de las sillas
-  getSeatsByFunction: async (functionId: string): Promise<SeatMapResponse> => {
-    const { data } = await api.get<SeatMapResponse>(`/functions/${functionId}/seats`);
+  async getSeatsByFunction(functionId: string): Promise<SeatMapResponse> {
+    const { data } = await client.get<SeatMapResponse>(`/functions/${functionId}`);
     return data;
   },
 
-  // Bloquear temporalmente las sillas seleccionadas (10 min)
-  lockSeats: async (payload: LockSeatsPayload): Promise<LockSeatsResponse> => {
-    const { data } = await api.post<LockSeatsResponse>('/reservations/lock-seats', payload);
-    return data;
+  async lockSeats({ functionId, seatIds }: { functionId: string; seatIds: string[] }): Promise<{ reservationId: string }> {
+    const currentFunction = await this.getSeatsByFunction(functionId);
+    
+    // Marcar en json-server las sillas seleccionadas como ocupadas temporalmente
+    const updatedSeats = currentFunction.seats.map((seat) => {
+      if (seatIds.includes(seat.id)) {
+        return { ...seat, status: 'selected' as const };
+      }
+      return seat;
+    });
+
+    await client.patch(`/functions/${functionId}`, { seats: updatedSeats });
+
+    return { reservationId: `res-${Date.now()}` };
   },
 
-  // Liberar sillas en caso de cancelación o tiempo expirado
-  releaseSeats: async (reservationId: string): Promise<void> => {
-    await api.delete('/reservations/release-seats', { data: { reservationId } });
-  }
+  async releaseSeats(): Promise<void> {
+    // Mock local: no requiere rollback remoto
+    return Promise.resolve();
+  },
 };
+
+export default seatService;
